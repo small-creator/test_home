@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #C8A359;
+  --color-secondary: #1B2C56;
+  --color-background-light: #F8F9FA;
+  --color-background-dark: #0F172A;
+  --color-surface-light: #FFFFFF;
+  --color-surface-dark: #1E293B;
+  --color-navy-dark: #121E38;
+  
+  --font-display: "Pretendard", sans-serif;
+  --font-sans: "Pretendard", sans-serif;
+}
+
+@layer utilities {
+  .gold-gradient-text {
+      background: linear-gradient(to right, #C8A359, #E6C885, #C8A359);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+  }
+  .hero-pattern {
+      background-image: linear-gradient(rgba(27, 44, 86, 0.8), rgba(15, 23, 42, 0.9)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuBfhdO3wCIlj7HMhFYBi75MGaaGiBsu2id2V3ljan1omWm1kkXhfJxsu0UCk5VkpZEZHsbRcXgsLGirVS6Pk_Q1xiRMkfJPqN5DYoJ2ovhMDpmPadOJGqjyskZ7S_SZHBF_YZMPr6r6OtyBCv0khK_KB5xaaWvEx3XI27Q1f_H1_7znv6aspzp_Y1oUJC68TRr1HgSsVakC4yiDI6pBHZtNjZzZENrJLacz8mb5vn8h5ZffOWDkBc7_hxlngyavEqU4N4ycuoh-EQQ');
+      background-size: cover;
+      background-position: center;
+  }
+  .geometric-divider {
+      position: relative;
+      height: 40px;
+      background-color: var(--color-background-light);
+      overflow: hidden;
+  }
+  .geometric-divider::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 20px solid var(--color-primary);
+  }
+  .dark .geometric-divider {
+      background-color: var(--color-background-dark);
+  }
+  .hover-card-effect {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hover-card-effect:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  .glass-nav {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  .dark .glass-nav {
+      background: rgba(18, 30, 56, 0.85);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .chart-bar {
+      animation: growUp 1s ease-out forwards;
+  }
+  .broker-accent {
+      background: linear-gradient(135deg, transparent 50%, var(--color-primary) 50%);
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      z-index: 0;
+  }
+}
+
+@keyframes growUp {
+    from { height: 0; }
+}
+
+body {
+    font-family: 'Pretendard', sans-serif;
+}

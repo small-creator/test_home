@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run migrate:*)",
+      "Bash(npm run dev:all:*)",
+      "Bash(python test_homepage.py:*)",
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "Bash(timeout:*)",
+      "Bash(del /F \"c:\\\\Users\\\\masuguri\\\\Desktop\\\\큰문\\\\홈페이지\\\\data\\\\realestate.db\")",
+      "Bash(dir:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)"
+    ]
+  }
+}
