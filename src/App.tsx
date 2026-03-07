@@ -1200,8 +1200,8 @@ export default function App() {
     <div className="font-sans bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 transition-colors duration-300">
       <Navbar />
       <Hero />
-      <FeaturedListings />
       <Stats />
+      <FeaturedListings />
       <NeighborhoodGuide />
       <MarketTrends />
       <AboutBroker />
