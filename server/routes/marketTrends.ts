@@ -312,7 +312,7 @@ function getCachedData(): MarketTrendResponse | null {
 
   try {
     const parsed = JSON.parse(row.data);
-    if (!parsed.monthlyData || !parsed.statistics) return null;
+    if (!parsed.area84 || !parsed.area59) return null;
     return parsed;
   } catch {
     return null;
