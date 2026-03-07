@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { clearAuthToken } from '../../utils/api';
-import ListingsManager from './ListingsManager';
 import NewsManager from './NewsManager';
+import FeaturedManager from './FeaturedManager';
 
-type Tab = 'listings' | 'news';
+type Tab = 'featured' | 'news';
 
 interface AdminPanelProps {
   onLogout: () => void;
 }
 
 export default function AdminPanel({ onLogout }: AdminPanelProps) {
-  const [activeTab, setActiveTab] = useState<Tab>('listings');
+  const [activeTab, setActiveTab] = useState<Tab>('featured');
 
   const handleLogout = () => {
     clearAuthToken();
@@ -33,13 +33,13 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
                   큰문부동산 관리자
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  매물 및 뉴스 관리
+                  매물 시세 및 커뮤니티 관리
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <a
-                href="#"
+                href="/"
                 className="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors flex items-center gap-2"
               >
                 <span className="material-symbols-outlined">home</span>
@@ -62,25 +62,23 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-8">
             <button
-              onClick={() => setActiveTab('listings')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-all ${
-                activeTab === 'listings'
+              onClick={() => setActiveTab('featured')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-all ${activeTab === 'featured'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
-              }`}
+                }`}
             >
               <span className="flex items-center gap-2">
                 <span className="material-symbols-outlined">home_work</span>
-                매물 관리
+                매물 시세 관리
               </span>
             </button>
             <button
               onClick={() => setActiveTab('news')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-all ${
-                activeTab === 'news'
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-all ${activeTab === 'news'
                   ? 'border-primary text-primary'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
-              }`}
+                }`}
             >
               <span className="flex items-center gap-2">
                 <span className="material-symbols-outlined">article</span>
@@ -92,14 +90,14 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
       </div>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <motion.div
           key={activeTab}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          {activeTab === 'listings' ? <ListingsManager /> : <NewsManager />}
+          {activeTab === 'featured' ? <FeaturedManager /> : <NewsManager />}
         </motion.div>
       </main>
     </div>

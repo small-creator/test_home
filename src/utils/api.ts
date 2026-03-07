@@ -1,4 +1,4 @@
-import type { Listing, ListingFormData, NewsItem, NewsFormData, ApiResponse, UploadResponse } from '../types';
+import type { Listing, ListingFormData, NewsItem, NewsFormData, ApiResponse, UploadResponse, FeaturedSetting } from '../types';
 
 // Base URL - uses Vite proxy in development, direct in production
 const BASE_URL = import.meta.env.PROD ? '' : '';
@@ -139,6 +139,28 @@ export async function deleteNews(
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  });
+}
+
+// ==========================================
+// Featured Settings API
+// ==========================================
+
+export async function fetchFeaturedSettings(): Promise<FeaturedSetting[]> {
+  const response = await apiCall<FeaturedSetting[]>('/featured');
+  return response.data || [];
+}
+
+export async function updateFeaturedSettings(
+  settings: Partial<FeaturedSetting>[],
+  token: string
+): Promise<ApiResponse<{ message: string }>> {
+  return apiCall('/featured', {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ settings }),
   });
 }
 

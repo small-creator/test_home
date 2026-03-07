@@ -49,6 +49,25 @@ export function initDatabase() {
     )
   `);
 
+  // Create featured_settings table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS featured_settings (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      price_25 TEXT NOT NULL,
+      price_34 TEXT NOT NULL
+    )
+  `);
+
+  // Insert default featured settings if empty
+  const count = db.prepare('SELECT COUNT(*) as count FROM featured_settings').get() as { count: number };
+  if (count.count === 0) {
+    const stmt = db.prepare('INSERT INTO featured_settings (id, title, price_25, price_34) VALUES (?, ?, ?, ?)');
+    stmt.run('graceum_sale', '고덕그라시움 매매', '19억~', '25억~');
+    stmt.run('graceum_jeonse', '고덕그라시움 전세', '8억~', '10억~');
+    stmt.run('arteon_sale', '고덕아르테온 매매', '18억~', '24억~');
+  }
+
   console.log('✅ Database initialized successfully');
 }
 

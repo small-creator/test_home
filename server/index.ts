@@ -4,10 +4,10 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { backupDatabase } from './db';
-import listingsRouter from './routes/listings';
 import newsRouter from './routes/news';
 import uploadRouter from './routes/upload';
 import marketTrendsRouter from './routes/marketTrends';
+import featuredRouter from './routes/featured';
 
 // ES module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -36,10 +36,10 @@ const uploadDir = path.join(dataDir, 'uploads');
 app.use('/uploads', express.static(uploadDir));
 
 // API Routes
-app.use('/api/listings', listingsRouter);
 app.use('/api/news', newsRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/market-trends', marketTrendsRouter);
+app.use('/api/featured', featuredRouter);
 
 // Production: Serve frontend static files
 if (process.env.NODE_ENV === 'production') {

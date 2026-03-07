@@ -59,3 +59,11 @@ export interface UploadResponse {
   size: number;
   mimetype: string;
 }
+
+// Featured Settings
+export interface FeaturedSetting {
+  id: string;
+  title: string;
+  price_25: string;
+  price_34: string;
+}
