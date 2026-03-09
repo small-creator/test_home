@@ -1041,89 +1041,113 @@ function CTA() {
 // ==========================================
 function Footer() {
   return (
-    <footer className="bg-gray-50 dark:bg-navy-dark pt-20 pb-10 border-t border-gray-200 dark:border-gray-800">
+    <footer className="bg-gray-50 dark:bg-[#0B1120] pt-24 pb-12 border-t border-gray-200 dark:border-gray-800/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          <div className="col-span-1 md:col-span-1">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="h-8 w-8 relative flex items-center justify-center bg-primary rounded-sm">
-                <span className="material-symbols-outlined text-white text-lg">roofing</span>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-20">
+          <div className="md:col-span-4">
+            <Link to="/" className="flex items-center gap-3 mb-8 group">
+              <div className="h-10 w-10 relative flex items-center justify-center bg-secondary dark:bg-white rounded-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <span className="material-symbols-outlined text-white dark:text-secondary text-2xl">roofing</span>
               </div>
               <div className="flex flex-col">
-                <span className="font-display font-bold text-lg text-secondary dark:text-white tracking-wide">큰문부동산</span>
+                <span className="font-display font-bold text-2xl text-secondary dark:text-white tracking-tight">큰문부동산</span>
+                <span className="text-[0.6rem] uppercase tracking-[0.3em] text-primary font-bold">Premium Real Estate</span>
               </div>
-            </div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
-              "내가 고객님 상황이라면 가장 좋은 선택이 뭘까?" 를 생각하는 부동산
+            </Link>
+            <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed mb-8 max-w-sm">
+              "내가 고객님 상황이라면 가장 좋은 선택이 뭘까?"<br />
+              고객의 입장에서 가장 가치 있는 선택을 돕는 든든한 파트너가 되겠습니다.
             </p>
-            <div className="flex space-x-4">
-              <a className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-all" href="#">
-                <span className="text-xs font-bold">B</span>
-              </a>
-              <a className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-all" href="#">
-                <span className="text-xs font-bold">Y</span>
-              </a>
-              <a className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-all" href="#">
-                <span className="text-xs font-bold">I</span>
-              </a>
+            <div className="flex space-x-5">
+              {[
+                { label: 'B', color: 'bg-[#2DB400]', url: 'https://blog.naver.com/keunmun_re' },
+                { label: 'Y', color: 'bg-[#FF0000]', url: '#' },
+                { label: 'I', color: 'bg-gradient-to-tr from-[#FFDC80] via-[#E1306C] to-[#405DE6]', url: '#' }
+              ].map((social, i) => (
+                <a
+                  key={i}
+                  href={social.url}
+                  className={`w-10 h-10 rounded-xl ${social.color} flex items-center justify-center text-white font-bold shadow-md hover:-translate-y-1 transition-all duration-300`}
+                >
+                  <span className="text-sm">{social.label}</span>
+                </a>
+              ))}
             </div>
           </div>
-          <div>
-            <h4 className="font-bold text-secondary dark:text-white mb-6 tracking-wider text-sm uppercase relative inline-block">
+
+          <div className="md:col-span-2 md:ml-auto">
+            <h4 className="font-bold text-secondary dark:text-white mb-8 tracking-widest text-xs uppercase relative inline-block">
               빠른 링크
-              <span className="absolute -bottom-2 left-0 w-8 h-0.5 bg-primary"></span>
-            </h4>
-            <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
-              <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">매물 찾기</a></li>
-              <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">시세 리포트</a></li>
-              <li><Link className="hover:text-primary transition-colors hover:pl-1" to="/news">뉴스&팁</Link></li>
-              <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">회사 소개</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-secondary dark:text-white mb-6 tracking-wider text-sm uppercase relative inline-block">
-              서비스
-              <span className="absolute -bottom-2 left-0 w-8 h-0.5 bg-primary"></span>
-            </h4>
-            <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
-              <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">매수 상담</a></li>
-              <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">매도 의뢰</a></li>
-              <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">임대 관리</a></li>
-              <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">투자 컨설팅</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-secondary dark:text-white mb-6 tracking-wider text-sm uppercase relative inline-block">
-              연락처
-              <span className="absolute -bottom-2 left-0 w-8 h-0.5 bg-primary"></span>
+              <span className="absolute -bottom-2 left-0 w-6 h-0.5 bg-primary"></span>
             </h4>
             <ul className="space-y-4 text-sm text-gray-600 dark:text-gray-400">
-              <li className="flex items-start gap-3">
-                <span className="material-symbols-outlined text-primary text-lg mt-0.5">location_on</span>
-                <span>서울시 강동구 고덕로 353, 114호<br />(고덕동, 고덕그라시움 1상가 1층)</span>
+              <li><Link className="hover:text-primary transition-all flex items-center gap-2 group" to="/"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>홈</Link></li>
+              <li><Link className="hover:text-primary transition-all flex items-center gap-2 group" to="/news"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>뉴스&팁</Link></li>
+              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="#"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>매물 검색</a></li>
+            </ul>
+          </div>
+
+          <div className="md:col-span-2">
+            <h4 className="font-bold text-secondary dark:text-white mb-8 tracking-widest text-xs uppercase relative inline-block">
+              서비스
+              <span className="absolute -bottom-2 left-0 w-6 h-0.5 bg-primary"></span>
+            </h4>
+            <ul className="space-y-4 text-sm text-gray-600 dark:text-gray-400">
+              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="#"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>매수 상담</a></li>
+              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="#"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>매도 의뢰</a></li>
+              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="#"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>임대 관리</a></li>
+            </ul>
+          </div>
+
+          <div className="md:col-span-4 md:ml-auto">
+            <h4 className="font-bold text-secondary dark:text-white mb-8 tracking-widest text-xs uppercase relative inline-block">
+              CONTACT US
+              <span className="absolute -bottom-2 left-0 w-6 h-0.5 bg-primary"></span>
+            </h4>
+            <ul className="space-y-6 text-sm text-gray-600 dark:text-gray-400">
+              <li className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                  <span className="material-symbols-outlined text-lg">location_on</span>
+                </div>
+                <span className="leading-relaxed">강동구 고덕로 353 1상가동 1층 에이114호<br /><span className="text-gray-400 text-xs">(고덕동, 고덕그라시움)</span></span>
               </li>
-              <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary text-lg">call</span>
-                <span className="font-bold text-secondary dark:text-white text-base">02.441.1110</span>
+              <li className="flex items-center gap-4">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                  <span className="material-symbols-outlined text-lg">call</span>
+                </div>
+                <span className="font-bold text-secondary dark:text-white text-lg">02.441.1110</span>
               </li>
-              <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary text-lg">smartphone</span>
-                <span className="font-bold">010.9345.4108</span>
+              <li className="flex items-center gap-4">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                  <span className="material-symbols-outlined text-lg">smartphone</span>
+                </div>
+                <span className="font-bold text-secondary dark:text-white font-display">010.9345.4108</span>
               </li>
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-200 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <p className="text-xs text-gray-500 dark:text-gray-500">© 2024 큰문부동산 공인중개사사무소. All rights reserved. | 대표: 이선규 | 등록번호: 11110-2024-00000</p>
-            <div className="hidden md:flex items-center gap-2 text-xs text-gray-400 border-l border-gray-300 dark:border-gray-700 pl-4">
-              <span className="material-symbols-outlined text-sm">verified_user</span>
-              <span>한국공인중개사협회 정회원</span>
+
+        <div className="border-t border-gray-200 dark:border-gray-800/50 pt-10">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div className="space-y-2">
+              <p className="text-[11px] text-gray-500 dark:text-gray-500 flex flex-wrap gap-x-4 gap-y-2">
+                <span>© 2024 큰문부동산 공인중개사사무소. All rights reserved.</span>
+                <span className="text-gray-300 dark:text-gray-700">|</span>
+                <span>대표: 이선규</span>
+                <span className="text-gray-300 dark:text-gray-700">|</span>
+                <span>등록번호: 11740-2022-00126</span>
+              </p>
+              <div className="flex items-center gap-2 text-[10px] text-gray-400">
+                <span className="material-symbols-outlined text-xs text-primary">verified_user</span>
+                <span>한국공인중개사협회 정회원 · 부동산 매물 정보 플랫폼 가입 인증 업체</span>
+              </div>
             </div>
-          </div>
-          <div className="flex space-x-6 text-xs text-gray-500 dark:text-gray-500">
-            <a className="hover:text-gray-800 dark:hover:text-gray-300 transition-colors" href="#">개인정보처리방침</a>
-            <a className="hover:text-gray-800 dark:hover:text-gray-300 transition-colors" href="#">이용약관</a>
+
+            <div className="flex items-center gap-8 text-[11px] font-medium text-gray-500 dark:text-gray-400">
+              <a className="hover:text-primary transition-colors" href="#">개인정보처리방침</a>
+              <a className="hover:text-primary transition-colors" href="#">이용약관</a>
+              <Link className="px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded text-[10px] hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors" to="/admin">Admin</Link>
+            </div>
           </div>
         </div>
       </div>
