@@ -28,6 +28,10 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
         title: news.title,
         description: news.description
       });
+      // 이미지가 /uploads/로 시작하는 경우 기본값을 파일 업로드 모드로 설정
+      if (news.image && news.image.startsWith('/uploads/')) {
+        setImageMode('upload');
+      }
     }
   }, [news]);
 
