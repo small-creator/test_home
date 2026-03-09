@@ -16,7 +16,8 @@ const getCategoryBadgeClass = (category: string) => {
 
 const formatDate = (dateString?: string) => {
     if (!dateString) return '';
-    const date = new Date(dateString);
+    // SQLite CURRENT_TIMESTAMP is UTC. Ensure browser parses as UTC correctly.
+    const date = new Date(dateString.includes('Z') ? dateString : dateString.replace(' ', 'T') + 'Z');
     return date.toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: 'long',

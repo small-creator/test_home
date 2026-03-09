@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { fetchNewsItem } from '../utils/api';
 import type { NewsItem } from '../types';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const getCategoryBadgeClass = (category: string) => {
     switch (category) {
@@ -15,7 +17,8 @@ const getCategoryBadgeClass = (category: string) => {
 
 const formatDate = (dateString?: string) => {
     if (!dateString) return '';
-    const date = new Date(dateString);
+    // SQLite CURRENT_TIMESTAMP is UTC. Ensure browser parses as UTC.
+    const date = new Date(dateString.includes('Z') ? dateString : dateString.replace(' ', 'T') + 'Z');
     return date.toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: 'long',
@@ -23,6 +26,51 @@ const formatDate = (dateString?: string) => {
         hour: '2-digit',
         minute: '2-digit'
     });
+};
+
+const ContentRenderer = ({ content }: { content: string }) => {
+    const trimmed = content.trim();
+    const isHtml = trimmed.startsWith('<');
+    const isFullHtml = trimmed.toLowerCase().startsWith('<!doctype') || trimmed.toLowerCase().startsWith('<html');
+
+    if (isFullHtml) {
+        return (
+            <div className="w-full bg-white rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800">
+                <iframe
+                    title="news-content"
+                    srcDoc={content}
+                    className="w-full min-h-[600px] border-none"
+                    onLoad={(e) => {
+                        const iframe = e.currentTarget;
+                        if (iframe.contentWindow) {
+                            try {
+                                iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+                            } catch (err) {
+                                console.error('Iframe resize failed:', err);
+                            }
+                        }
+                    }}
+                />
+            </div>
+        );
+    }
+
+    if (isHtml) {
+        return (
+            <div
+                className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-loose"
+                dangerouslySetInnerHTML={{ __html: content }}
+            />
+        );
+    }
+
+    return (
+        <div className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-loose markdown-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {content}
+            </ReactMarkdown>
+        </div>
+    );
 };
 
 export default function NewsDetail({ id }: { id: number }) {
@@ -109,9 +157,7 @@ export default function NewsDetail({ id }: { id: number }) {
 
                     {/* Body Content */}
                     <div className="p-8 md:p-12">
-                        <div className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 whitespace-pre-line leading-loose">
-                            {news.description}
-                        </div>
+                        <ContentRenderer content={news.description} />
                     </div>
                 </article>
             </div>
