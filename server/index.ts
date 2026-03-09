@@ -8,6 +8,7 @@ import newsRouter from './routes/news';
 import uploadRouter from './routes/upload';
 import marketTrendsRouter from './routes/marketTrends';
 import featuredRouter from './routes/featured';
+import { getDb } from './db';
 
 // ES module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -40,6 +41,52 @@ app.use('/api/news', newsRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/market-trends', marketTrendsRouter);
 app.use('/api/featured', featuredRouter);
+
+// Dynamic Sitemap route
+app.get('/sitemap.xml', (req: Request, res: Response) => {
+  try {
+    const db = getDb();
+    const newsItems = db.prepare('SELECT id, updated_at FROM news ORDER BY updated_at DESC').all() as any[];
+
+    const baseUrl = 'https://keunmun.up.railway.app';
+    const today = new Date().toISOString().split('T')[0];
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/news</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+
+    newsItems.forEach(item => {
+      // Format: YYYY-MM-DD
+      const lastMod = item.updated_at ? item.updated_at.split(' ')[0] : today;
+      xml += `
+  <url>
+    <loc>${baseUrl}/news/${item.id}</loc>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>`;
+    });
+
+    xml += '\n</urlset>';
+
+    res.header('Content-Type', 'application/xml');
+    res.send(xml);
+  } catch (error) {
+    console.error('Sitemap generation failed:', error);
+    res.status(500).send('Error generating sitemap');
+  }
+});
 
 // Production: Serve frontend static files
 if (process.env.NODE_ENV === 'production') {
