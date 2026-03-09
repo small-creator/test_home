@@ -37,7 +37,7 @@ function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
-          <div className="flex-shrink-0 flex items-center gap-3">
+          <Link to="/" className="flex-shrink-0 flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="h-10 w-10 relative flex items-center justify-center bg-secondary dark:bg-white rounded-sm">
               <span className="material-symbols-outlined text-white dark:text-secondary text-2xl">roofing</span>
             </div>
@@ -45,32 +45,16 @@ function Navbar() {
               <span className="font-display font-bold text-xl text-secondary dark:text-white tracking-wide">고덕그라시움 큰문부동산</span>
               <span className="text-[0.65rem] uppercase tracking-[0.2em] text-primary font-medium">Real Estate</span>
             </div>
-          </div>
+          </Link>
           <div className="hidden md:flex space-x-8 items-center">
             <Link className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" to="/">
               홈
               <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <a className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" href="#">
-              매물 검색
-              <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-            </a>
-            <a className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" href="#">
-              소개
-              <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-            </a>
-            <a className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" href="#">
-              서비스
-              <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-            </a>
             <Link className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" to="/news">
-              커뮤니티
+              뉴스&팁
               <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <a className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" href="#">
-              연락처
-              <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-            </a>
             <div className="flex items-center gap-2 text-secondary dark:text-primary font-bold ml-4">
               <span className="material-symbols-outlined text-lg">call</span>
               <span className="tracking-widest">02.441.1110</span>
@@ -1092,7 +1076,7 @@ function Footer() {
             <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
               <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">매물 찾기</a></li>
               <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">시세 리포트</a></li>
-              <li><Link className="hover:text-primary transition-colors hover:pl-1" to="/news">커뮤니티 소식</Link></li>
+              <li><Link className="hover:text-primary transition-colors hover:pl-1" to="/news">뉴스&팁</Link></li>
               <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">회사 소개</a></li>
             </ul>
           </div>

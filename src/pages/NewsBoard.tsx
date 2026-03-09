@@ -65,9 +65,10 @@ export default function NewsBoard() {
         <div className="py-12 bg-gray-50 dark:bg-background-dark min-h-screen">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="mb-12 border-b border-gray-200 dark:border-gray-800 pb-8">
-                    <h1 className="text-4xl font-display font-bold text-secondary dark:text-white mb-4">커뮤니티 & 자유게시판</h1>
+                    <h2 className="text-primary font-bold tracking-widest text-sm mb-2 uppercase">NEWS & TIP</h2>
+                    <h1 className="text-3xl md:text-4xl font-display font-bold text-secondary dark:text-white mb-4">부동산 뉴스 & 팁</h1>
                     <p className="text-gray-600 dark:text-gray-400 max-w-3xl">
-                        고덕그라시움 외 고덕동, 상일동 일대의 최신 부동산 소식과 단지 정보, 유용한 팁을 함께 나눕니다.
+                        고덕그라시움·고덕아르테온 등 고덕동, 상일동 일대의 관련 최신 부동산 소식과 소유주를 위한 유용한 콘텐츠를 확인하세요.
                     </p>
                 </div>
 
