@@ -8,6 +8,21 @@ import AdminPanel from './components/admin/AdminPanel';
 import NewsBoard from './pages/NewsBoard';
 import NewsDetail from './pages/NewsDetail';
 import { isAuthenticated } from './utils/api';
+import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate, useLocation } from 'react-router-dom';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
+function NewsDetailWrapper() {
+  const { id } = useParams();
+  const numericId = parseInt(id || '', 10);
+  return <NewsDetail id={numericId} />;
+}
 
 // ==========================================
 // 1. Navigation Bar
@@ -32,10 +47,10 @@ function Navbar() {
             </div>
           </div>
           <div className="hidden md:flex space-x-8 items-center">
-            <a className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" href="#">
+            <Link className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" to="/">
               홈
               <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-            </a>
+            </Link>
             <a className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" href="#">
               매물 검색
               <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
@@ -48,10 +63,10 @@ function Navbar() {
               서비스
               <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </a>
-            <a className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" href="#/news">
+            <Link className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" to="/news">
               커뮤니티
               <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-            </a>
+            </Link>
             <a className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary font-medium transition-colors relative group" href="#">
               연락처
               <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
@@ -1077,7 +1092,7 @@ function Footer() {
             <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
               <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">매물 찾기</a></li>
               <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">시세 리포트</a></li>
-              <li><a className="hover:text-primary transition-colors hover:pl-1" href="#/news">커뮤니티 소식</a></li>
+              <li><Link className="hover:text-primary transition-colors hover:pl-1" to="/news">커뮤니티 소식</Link></li>
               <li><a className="hover:text-primary transition-colors hover:pl-1" href="#">회사 소개</a></li>
             </ul>
           </div>
@@ -1136,18 +1151,7 @@ function Footer() {
 // 13. Main App Component
 // ==========================================
 export default function App() {
-  const [currentRoute, setCurrentRoute] = useState(window.location.hash);
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      setCurrentRoute(window.location.hash);
-      setIsLoggedIn(isAuthenticated());
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
@@ -1155,61 +1159,60 @@ export default function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    window.location.hash = '';
   };
 
-  // Admin route
-  if (currentRoute === '#/admin') {
-    if (!isLoggedIn) {
-      return <LoginForm onLoginSuccess={handleLoginSuccess} />;
-    }
-    return <AdminPanel onLogout={handleLogout} />;
-  }
-
-  // News Board route
-  if (currentRoute === '#/news') {
-    return (
-      <div className="font-sans bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 transition-colors duration-300 flex flex-col min-h-screen">
-        <Navbar />
-        <div className="flex-grow pt-20">
-          <NewsBoard />
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  // News Detail route
-  if (currentRoute.startsWith('#/news/')) {
-    const idStr = currentRoute.split('#/news/')[1];
-    const id = parseInt(idStr, 10);
-    if (!isNaN(id)) {
-      return (
-        <div className="font-sans bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 transition-colors duration-300 flex flex-col min-h-screen">
-          <Navbar />
-          <div className="flex-grow pt-20">
-            <NewsDetail id={id} />
-          </div>
-          <Footer />
-        </div>
-      );
-    }
-  }
-
   return (
-    <div className="font-sans bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 transition-colors duration-300">
-      <Navbar />
-      <Hero />
-      <Stats />
-      <FeaturedListings />
-      <NeighborhoodGuide />
-      <MarketTrends />
-      <AboutBroker />
-      <ClientReviews />
-      <Services />
-      <CommunityNews />
-      <CTA />
-      <Footer />
-    </div>
+    <Router>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={
+          <div className="font-sans bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 transition-colors duration-300">
+            <Navbar />
+            <Hero />
+            <Stats />
+            <FeaturedListings />
+            <NeighborhoodGuide />
+            <MarketTrends />
+            <AboutBroker />
+            <ClientReviews />
+            <Services />
+            <CommunityNews />
+            <CTA />
+            <Footer />
+          </div>
+        } />
+
+        <Route path="/news" element={
+          <div className="font-sans bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 transition-colors duration-300 flex flex-col min-h-screen">
+            <Navbar />
+            <div className="flex-grow pt-20">
+              <NewsBoard />
+            </div>
+            <Footer />
+          </div>
+        } />
+
+        <Route path="/news/:id" element={
+          <div className="font-sans bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 transition-colors duration-300 flex flex-col min-h-screen">
+            <Navbar />
+            <div className="flex-grow pt-20">
+              <NewsDetailWrapper />
+            </div>
+            <Footer />
+          </div>
+        } />
+
+        <Route path="/admin" element={
+          isLoggedIn ? (
+            <AdminPanel onLogout={handleLogout} />
+          ) : (
+            <LoginForm onLoginSuccess={handleLoginSuccess} />
+          )
+        } />
+
+        {/* Catch all - redirect to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
   );
 }

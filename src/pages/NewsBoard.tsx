@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { fetchNews } from '../utils/api';
 import type { NewsItem } from '../types';
 
@@ -16,7 +17,12 @@ const getCategoryBadgeClass = (category: string) => {
 
 const stripHtml = (text: string) => {
     if (!text) return '';
-    return text.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+    // 1. Remove style and script tags and their content first
+    let cleaned = text.replace(/<(style|script)[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+    // 2. Remove all other HTML tags
+    cleaned = cleaned.replace(/<[^>]*>?/gm, ' ');
+    // 3. Clean up whitespace
+    return cleaned.replace(/\s+/g, ' ').trim();
 };
 
 const formatDate = (dateString?: string) => {
@@ -74,41 +80,45 @@ export default function NewsBoard() {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {news.map((item, index) => (
-                            <motion.a
-                                href={`#/news/${item.id}`}
+                            <Link
+                                to={`/news/${item.id}`}
                                 key={item.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: index * 0.05 }}
-                                className="bg-white dark:bg-navy-dark rounded-xl overflow-hidden shadow-sm hover-card-effect group block border border-gray-100 dark:border-gray-800"
+                                className="block"
                             >
-                                {item.image ? (
-                                    <div className="h-48 overflow-hidden relative">
-                                        <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
-                                            {item.category}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                                    className="bg-white dark:bg-navy-dark rounded-xl overflow-hidden shadow-sm hover-card-effect group border border-gray-100 dark:border-gray-800 h-full"
+                                >
+                                    {item.image ? (
+                                        <div className="h-48 overflow-hidden relative">
+                                            <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
+                                                {item.category}
+                                            </div>
+                                            <img alt={item.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src={item.image} />
+                                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
                                         </div>
-                                        <img alt={item.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src={item.image} />
-                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
-                                    </div>
-                                ) : (
-                                    <div className="h-12 bg-gray-50 dark:bg-gray-800/30 relative">
-                                        <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
-                                            {item.category}
+                                    ) : (
+                                        <div className="h-12 bg-gray-50 dark:bg-gray-800/30 relative">
+                                            <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
+                                                {item.category}
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
-                                <div className="p-6">
-                                    <h4 className="text-xl font-bold text-secondary dark:text-white mb-3 group-hover:text-primary transition-colors line-clamp-2">{item.title}</h4>
-                                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">{stripHtml(item.description)}</p>
+                                    )}
+                                    <div className="p-6">
+                                        <h4 className="text-xl font-bold text-secondary dark:text-white mb-3 group-hover:text-primary transition-colors line-clamp-2">{item.title}</h4>
+                                        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">{stripHtml(item.description)}</p>
 
-                                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
-                                        <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(item.created_at)}</span>
-                                        <span className="inline-flex items-center text-sm font-bold text-primary transition-colors">
-                                            자세히 보기 <span className="material-symbols-outlined text-sm ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                        </span>
+                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
+                                            <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(item.created_at)}</span>
+                                            <span className="inline-flex items-center text-sm font-bold text-primary transition-colors">
+                                                자세히 보기 <span className="material-symbols-outlined text-sm ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                            </motion.a>
+                                </motion.div>
+                            </Link>
                         ))}
                     </div>
                 )}

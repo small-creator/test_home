@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchNewsItem } from '../utils/api';
 import type { NewsItem } from '../types';
 import ReactMarkdown from 'react-markdown';
@@ -109,7 +110,7 @@ export default function NewsDetail({ id }: { id: number }) {
         return (
             <div className="text-center py-32 min-h-screen">
                 <h2 className="text-2xl font-bold text-red-500 mb-4">{error || '게시글이 존재하지 않습니다.'}</h2>
-                <a href="#/news" className="text-primary hover:underline">목록으로 돌아가기</a>
+                <Link to="/news" className="text-primary hover:underline">목록으로 돌아가기</Link>
             </div>
         );
     }
@@ -120,10 +121,10 @@ export default function NewsDetail({ id }: { id: number }) {
 
                 {/* Navigation / Back Button */}
                 <div className="mb-8">
-                    <a href="#/news" className="inline-flex items-center text-gray-500 hover:text-primary transition-colors">
+                    <Link to="/news" className="inline-flex items-center text-gray-500 hover:text-primary transition-colors">
                         <span className="material-symbols-outlined text-sm mr-1">arrow_back</span>
                         목록으로 돌아가기
-                    </a>
+                    </Link>
                 </div>
 
                 {/* Content Card */}

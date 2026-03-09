@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { fetchNews } from '../utils/api';
 import type { NewsItem } from '../types';
 
@@ -33,8 +34,12 @@ const getCategoryBadgeClass = (category: string) => {
 
 const stripHtml = (text: string) => {
   if (!text) return '';
-  // Remove HTML tags and replace multiple spaces/newlines with a single space
-  return text.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+  // 1. Remove style and script tags and their content first
+  let cleaned = text.replace(/<(style|script)[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  // 2. Remove all other HTML tags
+  cleaned = cleaned.replace(/<[^>]*>?/gm, ' ');
+  // 3. Clean up whitespace
+  return cleaned.replace(/\s+/g, ' ').trim();
 };
 
 export default function CommunityNews() {
@@ -105,30 +110,32 @@ export default function CommunityNews() {
           className="grid md:grid-cols-3 gap-8"
         >
           {news.map((item) => (
-            <motion.a href={`#/news/${item.id}`} key={item.id} variants={statItem} className="bg-white dark:bg-navy-dark rounded-xl overflow-hidden shadow-sm hover-card-effect group cursor-pointer block border border-transparent dark:border-gray-800">
-              {item.image ? (
-                <div className="h-48 overflow-hidden relative">
-                  <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
-                    {item.category}
+            <Link to={`/news/${item.id}`} key={item.id} className="block">
+              <motion.div variants={statItem} className="bg-white dark:bg-navy-dark rounded-xl overflow-hidden shadow-sm hover-card-effect group cursor-pointer border border-transparent dark:border-gray-800 h-full">
+                {item.image ? (
+                  <div className="h-48 overflow-hidden relative">
+                    <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
+                      {item.category}
+                    </div>
+                    <img alt={item.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src={item.image} />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
                   </div>
-                  <img alt={item.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src={item.image} />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
-                </div>
-              ) : (
-                <div className="h-12 bg-gray-50 dark:bg-gray-800/30 relative">
-                  <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
-                    {item.category}
+                ) : (
+                  <div className="h-12 bg-gray-50 dark:bg-gray-800/30 relative">
+                    <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
+                      {item.category}
+                    </div>
                   </div>
+                )}
+                <div className="p-6">
+                  <h4 className="text-xl font-bold text-secondary dark:text-white mb-2 group-hover:text-primary transition-colors">{item.title}</h4>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">{stripHtml(item.description)}</p>
+                  <span className="inline-flex items-center text-sm font-bold text-primary transition-colors">
+                    더보기 <span className="material-symbols-outlined text-sm ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  </span>
                 </div>
-              )}
-              <div className="p-6">
-                <h4 className="text-xl font-bold text-secondary dark:text-white mb-2 group-hover:text-primary transition-colors">{item.title}</h4>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">{stripHtml(item.description)}</p>
-                <span className="inline-flex items-center text-sm font-bold text-primary transition-colors">
-                  더보기 <span className="material-symbols-outlined text-sm ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </span>
-              </div>
-            </motion.a>
+              </motion.div>
+            </Link>
           ))}
         </motion.div>
 
@@ -139,9 +146,9 @@ export default function CommunityNews() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mt-12 text-center"
         >
-          <a href="#/news" className="inline-flex items-center text-primary hover:text-secondary dark:hover:text-white transition-colors font-medium group">
+          <Link to="/news" className="inline-flex items-center text-primary hover:text-secondary dark:hover:text-white transition-colors font-medium group">
             모든 소식 보기 <span className="material-symbols-outlined ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>
