@@ -1060,7 +1060,7 @@ function Footer() {
             </p>
             <div className="flex space-x-5">
               {[
-                { label: 'B', color: 'bg-[#2DB400]', url: 'https://blog.naver.com/keunmun_re' },
+                { label: 'B', color: 'bg-[#2DB400]', url: 'https://blog.naver.com/gd_realtor' },
                 { label: 'Y', color: 'bg-[#FF0000]', url: '#' },
                 { label: 'I', color: 'bg-gradient-to-tr from-[#FFDC80] via-[#E1306C] to-[#405DE6]', url: '#' }
               ].map((social, i) => (
@@ -1083,7 +1083,6 @@ function Footer() {
             <ul className="space-y-4 text-sm text-gray-600 dark:text-gray-400">
               <li><Link className="hover:text-primary transition-all flex items-center gap-2 group" to="/"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>홈</Link></li>
               <li><Link className="hover:text-primary transition-all flex items-center gap-2 group" to="/news"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>뉴스&팁</Link></li>
-              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="#"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>매물 검색</a></li>
             </ul>
           </div>
 
@@ -1093,9 +1092,8 @@ function Footer() {
               <span className="absolute -bottom-2 left-0 w-6 h-0.5 bg-primary"></span>
             </h4>
             <ul className="space-y-4 text-sm text-gray-600 dark:text-gray-400">
-              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="#"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>매수 상담</a></li>
-              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="#"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>매도 의뢰</a></li>
-              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="#"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>임대 관리</a></li>
+              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="tel:02-441-1110"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>매수 상담</a></li>
+              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="tel:02-441-1110"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>매도 의뢰</a></li>
             </ul>
           </div>
 
