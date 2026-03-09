@@ -14,6 +14,11 @@ const getCategoryBadgeClass = (category: string) => {
     }
 };
 
+const stripHtml = (text: string) => {
+    if (!text) return '';
+    return text.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+};
+
 const formatDate = (dateString?: string) => {
     if (!dateString) return '';
     // SQLite CURRENT_TIMESTAMP is UTC. Ensure browser parses as UTC correctly.
@@ -94,7 +99,7 @@ export default function NewsBoard() {
                                 )}
                                 <div className="p-6">
                                     <h4 className="text-xl font-bold text-secondary dark:text-white mb-3 group-hover:text-primary transition-colors line-clamp-2">{item.title}</h4>
-                                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">{item.description}</p>
+                                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">{stripHtml(item.description)}</p>
 
                                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
                                         <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(item.created_at)}</span>

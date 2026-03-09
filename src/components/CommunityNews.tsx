@@ -31,6 +31,12 @@ const getCategoryBadgeClass = (category: string) => {
   }
 };
 
+const stripHtml = (text: string) => {
+  if (!text) return '';
+  // Remove HTML tags and replace multiple spaces/newlines with a single space
+  return text.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+};
+
 export default function CommunityNews() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,7 +123,7 @@ export default function CommunityNews() {
               )}
               <div className="p-6">
                 <h4 className="text-xl font-bold text-secondary dark:text-white mb-2 group-hover:text-primary transition-colors">{item.title}</h4>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">{item.description}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">{stripHtml(item.description)}</p>
                 <span className="inline-flex items-center text-sm font-bold text-primary transition-colors">
                   더보기 <span className="material-symbols-outlined text-sm ml-1 group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </span>
