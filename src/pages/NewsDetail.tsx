@@ -6,10 +6,8 @@ const getCategoryBadgeClass = (category: string) => {
     switch (category) {
         case '뉴스':
             return 'bg-primary text-navy-dark';
-        case '가이드':
+        case '팁':
             return 'bg-secondary dark:bg-white text-white dark:text-secondary';
-        case '커뮤니티':
-            return 'bg-gray-800 text-white';
         default:
             return 'bg-gray-500 text-white';
     }

@@ -31,7 +31,7 @@ export interface ListingFormData {
 // News types
 export interface NewsItem {
   id: number;
-  category: "뉴스" | "가이드" | "커뮤니티";
+  category: "뉴스" | "팁";
   image: string;
   title: string;
   description: string;
@@ -40,8 +40,8 @@ export interface NewsItem {
 }
 
 export interface NewsFormData {
-  category: "뉴스" | "가이드" | "커뮤니티";
-  image: string;
+  category: "뉴스" | "팁";
+  image?: string;
   title: string;
   description: string;
 }

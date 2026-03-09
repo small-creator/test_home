@@ -7,10 +7,8 @@ const getCategoryBadgeClass = (category: string) => {
     switch (category) {
         case '뉴스':
             return 'bg-primary text-navy-dark';
-        case '가이드':
+        case '팁':
             return 'bg-secondary dark:bg-white text-white dark:text-secondary';
-        case '커뮤니티':
-            return 'bg-gray-800 text-white';
         default:
             return 'bg-gray-500 text-white';
     }
@@ -78,13 +76,21 @@ export default function NewsBoard() {
                                 transition={{ duration: 0.4, delay: index * 0.05 }}
                                 className="bg-white dark:bg-navy-dark rounded-xl overflow-hidden shadow-sm hover-card-effect group block border border-gray-100 dark:border-gray-800"
                             >
-                                <div className="h-48 overflow-hidden relative">
-                                    <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
-                                        {item.category}
+                                {item.image ? (
+                                    <div className="h-48 overflow-hidden relative">
+                                        <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
+                                            {item.category}
+                                        </div>
+                                        <img alt={item.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src={item.image} />
+                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
                                     </div>
-                                    <img alt={item.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src={item.image} />
-                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
-                                </div>
+                                ) : (
+                                    <div className="h-12 bg-gray-50 dark:bg-gray-800/30 relative">
+                                        <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
+                                            {item.category}
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="p-6">
                                     <h4 className="text-xl font-bold text-secondary dark:text-white mb-3 group-hover:text-primary transition-colors line-clamp-2">{item.title}</h4>
                                     <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">{item.description}</p>

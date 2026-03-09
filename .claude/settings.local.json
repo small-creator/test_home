@@ -12,7 +12,11 @@
       "Bash(del /F \"c:\\\\Users\\\\masuguri\\\\Desktop\\\\큰문\\\\홈페이지\\\\data\\\\realestate.db\")",
       "Bash(dir:*)",
       "Bash(netstat:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }

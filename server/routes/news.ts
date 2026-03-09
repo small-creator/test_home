@@ -55,17 +55,17 @@ router.post('/', authMiddleware, (req: Request, res: Response) => {
     const { category, image, title, description } = req.body;
 
     // Validation
-    if (!category || !image || !title || !description) {
+    if (!category || !title || !description) {
       return res.status(400).json({
         success: false,
         error: '필수 필드가 누락되었습니다.'
       });
     }
 
-    if (!['뉴스', '가이드', '커뮤니티'].includes(category)) {
+    if (!['뉴스', '팁'].includes(category)) {
       return res.status(400).json({
         success: false,
-        error: '카테고리는 "뉴스", "가이드", "커뮤니티" 중 하나여야 합니다.'
+        error: '카테고리는 "뉴스", "팁" 중 하나여야 합니다.'
       });
     }
 
@@ -74,7 +74,7 @@ router.post('/', authMiddleware, (req: Request, res: Response) => {
       VALUES (?, ?, ?, ?)
     `);
 
-    const result = stmt.run(category, image, title, description);
+    const result = stmt.run(category, image || '', title, description);
 
     res.status(201).json({
       success: true,
@@ -108,10 +108,10 @@ router.put('/:id', authMiddleware, (req: Request, res: Response) => {
     }
 
     // Validation
-    if (category && !['뉴스', '가이드', '커뮤니티'].includes(category)) {
+    if (category && !['뉴스', '팁'].includes(category)) {
       return res.status(400).json({
         success: false,
-        error: '카테고리는 "뉴스", "가이드", "커뮤니티" 중 하나여야 합니다.'
+        error: '카테고리는 "뉴스", "팁" 중 하나여야 합니다.'
       });
     }
 

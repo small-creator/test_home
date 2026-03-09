@@ -56,7 +56,7 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
         }
       }
 
-      const dataToSubmit = { ...formData, image: imageUrl };
+      const dataToSubmit = { ...formData, image: imageUrl || '' };
 
       if (news) {
         // Update existing news
@@ -106,12 +106,11 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
           </label>
           <select
             value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value as '뉴스' | '가이드' | '커뮤니티' })}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value as '뉴스' | '팁' })}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
           >
             <option value="뉴스">뉴스</option>
-            <option value="가이드">가이드</option>
-            <option value="커뮤니티">커뮤니티</option>
+            <option value="팁">팁</option>
           </select>
         </div>
 
@@ -146,8 +145,7 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
               value={formData.image}
               onChange={(e) => setFormData({ ...formData, image: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-              placeholder="https://example.com/image.jpg"
-              required
+              placeholder="https://example.com/image.jpg (선택 사항)"
             />
           ) : (
             <input
@@ -155,7 +153,6 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
               accept="image/*"
               onChange={(e) => setImageFile(e.target.files?.[0] || null)}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-              required={!news}
             />
           )}
         </div>
@@ -183,11 +180,14 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
           <textarea
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            placeholder="뉴스 내용을 입력하세요"
-            rows={4}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono"
+            placeholder="뉴스 내용을 입력하세요. HTML 태그나 마크다운 형식을 사용할 수 있습니다."
+            rows={10}
             required
           />
+          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            * HTML 태그(예: &lt;b&gt;, &lt;br&gt;)나 마크다운 문법이 지원됩니다.
+          </p>
         </div>
 
         {error && (
@@ -214,6 +214,6 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
           </button>
         </div>
       </form>
-    </motion.div>
+    </motion.div >
   );
 }
