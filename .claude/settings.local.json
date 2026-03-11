@@ -16,7 +16,15 @@
       "Bash(git add:*)",
       "Bash(git rm:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(node --version:*)",
+      "Bash(node test-naver-scrape.js:*)",
+      "Bash(node test-naver-scrape-v2.js:*)",
+      "Bash(node test-naver-scrape-v3.js:*)",
+      "Bash(node test-naver-api.js:*)",
+      "Bash(npx playwright install chromium)",
+      "Bash(node test-playwright.js:*)",
+      "Bash(node:*)"
     ]
   }
 }

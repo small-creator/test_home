@@ -28,6 +28,10 @@ function NewsDetailWrapper() {
 // 1. Navigation Bar
 // ==========================================
 function Navbar() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -37,7 +41,7 @@ function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
-          <Link to="/" className="flex-shrink-0 flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <Link to="/" className="flex-shrink-0 flex items-center gap-3 hover:opacity-80 transition-opacity" onClick={closeMobileMenu}>
             <div className="h-10 w-10 relative flex items-center justify-center bg-secondary dark:bg-white rounded-sm">
               <span className="material-symbols-outlined text-white dark:text-secondary text-2xl">roofing</span>
             </div>
@@ -62,10 +66,46 @@ function Navbar() {
             <a className="bg-secondary hover:bg-navy-dark text-white px-5 py-2.5 rounded transition-all transform hover:scale-105 font-medium shadow-md border border-primary/30" href="tel:02-441-1110">문의하기</a>
           </div>
           <div className="md:hidden flex items-center">
-            <button className="text-gray-500 hover:text-primary">
-              <span className="material-symbols-outlined text-3xl">menu</span>
+            <button className="text-gray-500 hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              <span className="material-symbols-outlined text-3xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
             </button>
           </div>
+        </div>
+      </div>
+
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}
+      >
+        <div className="px-4 pb-6 pt-2 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-lg border-t border-gray-100 dark:border-gray-800 space-y-1">
+          <Link
+            to="/"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary font-medium transition-colors"
+            onClick={closeMobileMenu}
+          >
+            <span className="material-symbols-outlined text-xl">home</span>
+            홈
+          </Link>
+          <Link
+            to="/news"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-primary/10 hover:text-primary font-medium transition-colors"
+            onClick={closeMobileMenu}
+          >
+            <span className="material-symbols-outlined text-xl">newspaper</span>
+            뉴스&팁
+          </Link>
+          <div className="border-t border-gray-100 dark:border-gray-800 my-2"></div>
+          <div className="flex items-center gap-3 px-4 py-3 text-secondary dark:text-primary font-bold">
+            <span className="material-symbols-outlined text-xl">call</span>
+            <span className="tracking-widest">02.441.1110</span>
+          </div>
+          <a
+            href="tel:02-441-1110"
+            className="flex items-center justify-center gap-2 mx-4 py-3 bg-secondary hover:bg-navy-dark text-white font-bold rounded-lg shadow-md border border-primary/30 transition-colors"
+            onClick={closeMobileMenu}
+          >
+            <span className="material-symbols-outlined text-lg">call</span>
+            문의하기
+          </a>
         </div>
       </div>
     </motion.nav>
