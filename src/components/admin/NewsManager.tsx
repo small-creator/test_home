@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { fetchNews, deleteNews, getAuthToken } from '../../utils/api';
+import { fetchNews, deleteNews, getAuthToken, getFirstImage } from '../../utils/api';
 import type { NewsItem } from '../../types';
 import NewsForm from './NewsForm';
 
@@ -120,7 +120,7 @@ export default function NewsManager() {
               <div className="flex flex-col sm:flex-row">
                 <div className="sm:w-48 h-48 sm:h-auto">
                   <img
-                    src={item.image}
+                    src={getFirstImage(item.image)}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />

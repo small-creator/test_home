@@ -53,7 +53,7 @@ const upload = multer({
   }
 });
 
-// POST upload image (requires auth)
+// POST upload single image (requires auth)
 router.post('/', authMiddleware, upload.single('image'), (req: Request, res: Response) => {
   try {
     if (!req.file) {
@@ -76,6 +76,37 @@ router.post('/', authMiddleware, upload.single('image'), (req: Request, res: Res
     });
   } catch (error) {
     console.error('Error uploading image:', error);
+    res.status(500).json({
+      success: false,
+      error: '이미지 업로드에 실패했습니다.'
+    });
+  }
+});
+
+// POST upload multiple images (requires auth)
+router.post('/multiple', authMiddleware, upload.array('images', 10), (req: Request, res: Response) => {
+  try {
+    const files = req.files as Express.Multer.File[];
+    if (!files || files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: '이미지 파일을 선택해주세요.'
+      });
+    }
+
+    const uploadedFiles = files.map(file => ({
+      url: `/uploads/${file.filename}`,
+      filename: file.filename,
+      size: file.size,
+      mimetype: file.mimetype
+    }));
+
+    res.json({
+      success: true,
+      data: uploadedFiles
+    });
+  } catch (error) {
+    console.error('Error uploading images:', error);
     res.status(500).json({
       success: false,
       error: '이미지 업로드에 실패했습니다.'

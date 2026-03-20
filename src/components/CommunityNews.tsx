@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
-import { fetchNews } from '../utils/api';
+import { fetchNews, getFirstImage } from '../utils/api';
 import type { NewsItem } from '../types';
 
 // Animation variants
@@ -117,7 +117,7 @@ export default function CommunityNews() {
                     <div className={`absolute top-4 left-4 text-xs font-bold px-2 py-1 rounded z-10 ${getCategoryBadgeClass(item.category)}`}>
                       {item.category}
                     </div>
-                    <img alt={item.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src={item.image} />
+                    <img alt={item.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" src={getFirstImage(item.image)} />
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
                   </div>
                 ) : (

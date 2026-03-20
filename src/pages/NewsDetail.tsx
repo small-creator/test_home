@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchNewsItem } from '../utils/api';
+import { fetchNewsItem, getAllImages } from '../utils/api';
 import type { NewsItem } from '../types';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -145,16 +145,44 @@ export default function NewsDetail({ id }: { id: number }) {
                         </div>
                     </div>
 
-                    {/* Hero Image */}
-                    {news.image && (
-                        <div className="w-full aspect-video md:h-[500px] overflow-hidden bg-gray-100 dark:bg-gray-800">
-                            <img
-                                src={news.image}
-                                alt={news.title}
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                    )}
+                    {/* Hero Image(s) */}
+                    {news.image && (() => {
+                        const images = getAllImages(news.image);
+                        if (images.length === 0) return null;
+                        if (images.length === 1) {
+                            return (
+                                <div className="w-full aspect-video md:h-[500px] overflow-hidden bg-gray-100 dark:bg-gray-800">
+                                    <img
+                                        src={images[0]}
+                                        alt={news.title}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            );
+                        }
+                        return (
+                            <div className="space-y-2">
+                                <div className="w-full aspect-video md:h-[500px] overflow-hidden bg-gray-100 dark:bg-gray-800">
+                                    <img
+                                        src={images[0]}
+                                        alt={news.title}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 px-4 md:px-0">
+                                    {images.slice(1).map((src, idx) => (
+                                        <div key={idx} className="aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-lg">
+                                            <img
+                                                src={src}
+                                                alt={`${news.title} ${idx + 2}`}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })()}
 
                     {/* Body Content */}
                     <div className="p-8 md:p-12">

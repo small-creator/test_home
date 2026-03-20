@@ -203,6 +203,68 @@ export async function uploadImage(
   }
 }
 
+export async function uploadImages(
+  files: File[],
+  token: string
+): Promise<ApiResponse<UploadResponse[]>> {
+  try {
+    const formData = new FormData();
+    files.forEach(file => formData.append('images', file));
+
+    const response = await fetch('/api/upload/multiple', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: data.error || '이미지 업로드에 실패했습니다.',
+      };
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Image upload failed:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : '이미지 업로드에 실패했습니다.',
+    };
+  }
+}
+
+// 이미지 필드에서 첫 번째 이미지 URL 반환 (단일 URL 또는 JSON 배열 모두 처리)
+export function getFirstImage(image: string): string {
+  if (!image) return '';
+  if (image.startsWith('[')) {
+    try {
+      const arr = JSON.parse(image) as string[];
+      return arr[0] || '';
+    } catch {
+      return image;
+    }
+  }
+  return image;
+}
+
+// 이미지 필드에서 모든 이미지 URL 배열 반환
+export function getAllImages(image: string): string[] {
+  if (!image) return [];
+  if (image.startsWith('[')) {
+    try {
+      return JSON.parse(image) as string[];
+    } catch {
+      return [image];
+    }
+  }
+  return [image];
+}
+
 // ==========================================
 // Auth Helper
 // ==========================================

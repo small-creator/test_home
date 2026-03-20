@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { createNews, updateNews, uploadImage, getAuthToken } from '../../utils/api';
+import { createNews, updateNews, uploadImages, getAuthToken, getAllImages } from '../../utils/api';
 import type { NewsItem, NewsFormData } from '../../types';
 
 interface NewsFormProps {
@@ -16,7 +16,9 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
     description: ''
   });
   const [imageMode, setImageMode] = useState<'url' | 'upload'>('url');
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -28,12 +30,34 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
         title: news.title,
         description: news.description
       });
-      // 이미지가 /uploads/로 시작하는 경우 기본값을 파일 업로드 모드로 설정
-      if (news.image && news.image.startsWith('/uploads/')) {
+      // 이미지가 /uploads/로 시작하는 경우 파일 업로드 모드로 설정
+      if (news.image && (news.image.startsWith('/uploads/') || news.image.startsWith('['))) {
         setImageMode('upload');
+        setExistingImages(getAllImages(news.image));
       }
     }
   }, [news]);
+
+  useEffect(() => {
+    // 파일 선택 시 미리보기 URL 생성
+    const urls = imageFiles.map(file => URL.createObjectURL(file));
+    setPreviewUrls(urls);
+    return () => urls.forEach(url => URL.revokeObjectURL(url));
+  }, [imageFiles]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setImageFiles(files);
+    setExistingImages([]);
+  };
+
+  const removeExistingImage = (index: number) => {
+    setExistingImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeNewImage = (index: number) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,28 +72,39 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
     }
 
     try {
-      let imageUrl = formData.image;
+      let imageValue = formData.image;
 
-      // Upload image if file is selected
-      if (imageMode === 'upload' && imageFile) {
-        const uploadResult = await uploadImage(imageFile, token);
-        if (uploadResult.success && uploadResult.data) {
-          imageUrl = uploadResult.data.url;
+      if (imageMode === 'upload') {
+        let allUrls: string[] = [...existingImages];
+
+        // 새로 선택한 파일 업로드
+        if (imageFiles.length > 0) {
+          const uploadResult = await uploadImages(imageFiles, token);
+          if (uploadResult.success && uploadResult.data) {
+            const newUrls = uploadResult.data.map(f => f.url);
+            allUrls = [...allUrls, ...newUrls];
+          } else {
+            throw new Error(uploadResult.error || '이미지 업로드 실패');
+          }
+        }
+
+        if (allUrls.length === 1) {
+          imageValue = allUrls[0];
+        } else if (allUrls.length > 1) {
+          imageValue = JSON.stringify(allUrls);
         } else {
-          throw new Error(uploadResult.error || '이미지 업로드 실패');
+          imageValue = '';
         }
       }
 
-      const dataToSubmit = { ...formData, image: imageUrl || '' };
+      const dataToSubmit = { ...formData, image: imageValue || '' };
 
       if (news) {
-        // Update existing news
         const result = await updateNews(news.id, dataToSubmit, token);
         if (!result.success) {
           throw new Error(result.error || '뉴스 수정 실패');
         }
       } else {
-        // Create new news
         const result = await createNews(dataToSubmit, token);
         if (!result.success) {
           throw new Error(result.error || '뉴스 생성 실패');
@@ -152,12 +187,68 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
               placeholder="https://example.com/image.jpg (선택 사항)"
             />
           ) : (
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            />
+            <div className="space-y-3">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                * 여러 장 선택 가능 (최대 10장, 각 10MB 이하)
+              </p>
+
+              {/* 기존 이미지 미리보기 (수정 모드) */}
+              {existingImages.length > 0 && (
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">현재 이미지:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {existingImages.map((url, idx) => (
+                      <div key={idx} className="relative w-24 h-24">
+                        <img
+                          src={url}
+                          alt={`이미지 ${idx + 1}`}
+                          className="w-full h-full object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeExistingImage(idx)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 새로 선택한 이미지 미리보기 */}
+              {previewUrls.length > 0 && (
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">새로 추가할 이미지:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {previewUrls.map((url, idx) => (
+                      <div key={idx} className="relative w-24 h-24">
+                        <img
+                          src={url}
+                          alt={`새 이미지 ${idx + 1}`}
+                          className="w-full h-full object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeNewImage(idx)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
