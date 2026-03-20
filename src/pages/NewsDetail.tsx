@@ -74,6 +74,64 @@ const ContentRenderer = ({ content }: { content: string }) => {
     );
 };
 
+function ImageCarousel({ images, title }: { images: string[]; title: string }) {
+    const [current, setCurrent] = useState(0);
+
+    if (images.length === 0) return null;
+
+    if (images.length === 1) {
+        return (
+            <div className="w-full aspect-video md:h-[500px] overflow-hidden bg-gray-100 dark:bg-gray-800">
+                <img src={images[0]} alt={title} className="w-full h-full object-cover" />
+            </div>
+        );
+    }
+
+    return (
+        <div className="relative bg-gray-100 dark:bg-gray-800 select-none">
+            <div className="w-full aspect-video md:h-[500px] overflow-hidden">
+                <img
+                    src={images[current]}
+                    alt={`${title} ${current + 1}`}
+                    className="w-full h-full object-cover transition-opacity duration-300"
+                />
+            </div>
+
+            {/* 이전 버튼 */}
+            <button
+                onClick={() => setCurrent(i => (i - 1 + images.length) % images.length)}
+                className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+            >
+                <span className="material-symbols-outlined">chevron_left</span>
+            </button>
+
+            {/* 다음 버튼 */}
+            <button
+                onClick={() => setCurrent(i => (i + 1) % images.length)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+            >
+                <span className="material-symbols-outlined">chevron_right</span>
+            </button>
+
+            {/* 인디케이터 */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {images.map((_, idx) => (
+                    <button
+                        key={idx}
+                        onClick={() => setCurrent(idx)}
+                        className={`w-2 h-2 rounded-full transition-colors ${idx === current ? 'bg-white' : 'bg-white/40'}`}
+                    />
+                ))}
+            </div>
+
+            {/* 장수 표시 */}
+            <div className="absolute top-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
+                {current + 1} / {images.length}
+            </div>
+        </div>
+    );
+}
+
 export default function NewsDetail({ id }: { id: number }) {
     const [news, setNews] = useState<NewsItem | null>(null);
     const [loading, setLoading] = useState(true);
@@ -146,43 +204,7 @@ export default function NewsDetail({ id }: { id: number }) {
                     </div>
 
                     {/* Hero Image(s) */}
-                    {news.image && (() => {
-                        const images = getAllImages(news.image);
-                        if (images.length === 0) return null;
-                        if (images.length === 1) {
-                            return (
-                                <div className="w-full aspect-video md:h-[500px] overflow-hidden bg-gray-100 dark:bg-gray-800">
-                                    <img
-                                        src={images[0]}
-                                        alt={news.title}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                            );
-                        }
-                        return (
-                            <div className="space-y-2">
-                                <div className="w-full aspect-video md:h-[500px] overflow-hidden bg-gray-100 dark:bg-gray-800">
-                                    <img
-                                        src={images[0]}
-                                        alt={news.title}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 px-4 md:px-0">
-                                    {images.slice(1).map((src, idx) => (
-                                        <div key={idx} className="aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800 rounded-lg">
-                                            <img
-                                                src={src}
-                                                alt={`${news.title} ${idx + 2}`}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    })()}
+                    {news.image && <ImageCarousel images={getAllImages(news.image)} title={news.title} />}
 
                     {/* Body Content */}
                     <div className="p-8 md:p-12">
