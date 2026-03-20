@@ -84,7 +84,7 @@ router.post('/', authMiddleware, upload.single('image'), (req: Request, res: Res
 });
 
 // POST upload multiple images (requires auth)
-router.post('/multiple', authMiddleware, upload.array('images', 10), (req: Request, res: Response) => {
+router.post('/multiple', authMiddleware, upload.array('images', 20), (req: Request, res: Response) => {
   try {
     const files = req.files as Express.Multer.File[];
     if (!files || files.length === 0) {

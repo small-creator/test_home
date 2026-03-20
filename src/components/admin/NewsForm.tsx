@@ -196,7 +196,7 @@ export default function NewsForm({ news, onClose }: NewsFormProps) {
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                * 여러 장 선택 가능 (최대 10장, 각 10MB 이하)
+                * 여러 장 선택 가능 (최대 20장, 각 10MB 이하)
               </p>
 
               {/* 기존 이미지 미리보기 (수정 모드) */}
