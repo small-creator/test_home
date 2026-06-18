@@ -26,8 +26,12 @@ const upload = multer({
 });
 
 const localUploadsDir = path.join(process.cwd(), 'public/uploads');
-if (!fs.existsSync(localUploadsDir)) {
-  fs.mkdirSync(localUploadsDir, { recursive: true });
+if (!process.env.VERCEL && !fs.existsSync(localUploadsDir)) {
+  try {
+    fs.mkdirSync(localUploadsDir, { recursive: true });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function uploadFileToGitOrLocal(file: Express.Multer.File): Promise<string> {

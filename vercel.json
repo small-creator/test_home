@@ -1,8 +1,8 @@
 {
   "version": 2,
   "functions": {
-    "api/**/*.ts": {
-      "includeFiles": "data/**"
+    "api/index.ts": {
+      "includeFiles": "data/**/*"
     }
   },
   "rewrites": [
