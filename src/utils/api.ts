@@ -271,7 +271,14 @@ export function verifyPassword(password: string): boolean {
 }
 
 export function getAuthToken(): string | null {
-  return localStorage.getItem('admin_token');
+  const token = localStorage.getItem('admin_token');
+  if (!token) return null;
+  if (/[^\x00-\x7F]/.test(token)) {
+    const encoded = btoa(unescape(encodeURIComponent(token)));
+    localStorage.setItem('admin_token', encoded);
+    return encoded;
+  }
+  return token;
 }
 
 export function setAuthToken(token: string): void {
