@@ -3,11 +3,11 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import newsRouter from './routes/news';
-import uploadRouter from './routes/upload';
-import marketTrendsRouter from './routes/marketTrends';
-import featuredRouter from './routes/featured';
-import { readJson } from './db';
+import newsRouter from './routes/news.js';
+import uploadRouter from './routes/upload.js';
+import marketTrendsRouter from './routes/marketTrends.js';
+import featuredRouter from './routes/featured.js';
+import { readJson } from './db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

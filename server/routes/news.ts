@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { readJson, writeJson } from '../db';
-import { authMiddleware } from '../middleware/auth';
+import { readJson, writeJson } from '../db.js';
+import { authMiddleware } from '../middleware/auth.js';
 
 const router = Router();
 
