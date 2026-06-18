@@ -275,7 +275,8 @@ export function getAuthToken(): string | null {
 }
 
 export function setAuthToken(token: string): void {
-  localStorage.setItem('admin_token', token);
+  const encoded = btoa(unescape(encodeURIComponent(token)));
+  localStorage.setItem('admin_token', encoded);
 }
 
 export function clearAuthToken(): void {
