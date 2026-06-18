@@ -1,0 +1,20 @@
+[
+  {
+    "id": "graceum_sale",
+    "title": "코중사아파트 매매",
+    "price_25": "19억~",
+    "price_34": "25억~"
+  },
+  {
+    "id": "graceum_jeonse",
+    "title": "코중사아파트 전세",
+    "price_25": "8억~",
+    "price_34": "10억~"
+  },
+  {
+    "id": "arteon_sale",
+    "title": "코중사아파트 매매",
+    "price_25": "18억~",
+    "price_34": "24억~"
+  }
+]

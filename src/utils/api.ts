@@ -265,12 +265,8 @@ export function getAllImages(image: string): string[] {
   return [image];
 }
 
-// ==========================================
-// Auth Helper
-// ==========================================
-
 export function verifyPassword(password: string): boolean {
-  const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || '큰문admin2024';
+  const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || '코중사admin2026';
   return password === adminPassword;
 }
 

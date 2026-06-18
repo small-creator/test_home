@@ -67,7 +67,7 @@ export default function FeaturedManager() {
                 <div>
                     <h2 className="text-xl font-bold text-secondary dark:text-white">추천 매물 간편 시세 수정</h2>
                     <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                        메인 페이지의 고덕그라시움 및 아르테온 매물의 시세를 수정합니다. 변경 후 바로 적용됩니다.
+                        메인 페이지의 코중사아파트 매물의 시세를 수정합니다. 변경 후 바로 적용됩니다.
                     </p>
                 </div>
                 <button

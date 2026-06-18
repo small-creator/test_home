@@ -49,7 +49,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               관리자 로그인
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              큰문부동산 관리 페이지
+              코중사공인중개사무소 관리 페이지
             </p>
           </div>
 

@@ -2,41 +2,14 @@ import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
 import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
 
-// ES module __dirname equivalent
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const storage = multer.memoryStorage();
 
-// Ensure uploads directory exists (inside data volume)
-const dataDir = process.env.DATA_DIR || path.join(process.cwd(), 'data');
-const uploadDir = path.join(dataDir, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure multer storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    // Generate unique filename: timestamp-originalname
-    const uniqueSuffix = Date.now();
-    const ext = path.extname(file.originalname);
-    const basename = path.basename(file.originalname, ext);
-    const safeBasename = basename.replace(/[^a-zA-Z0-9가-힣]/g, '_');
-    cb(null, `${uniqueSuffix}-${safeBasename}${ext}`);
-  }
-});
-
-// File filter - only allow images
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
@@ -44,17 +17,61 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
   }
 };
 
-// Multer upload configuration
 const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit
+    fileSize: 10 * 1024 * 1024
   }
 });
 
-// POST upload single image (requires auth)
-router.post('/', authMiddleware, upload.single('image'), (req: Request, res: Response) => {
+const localUploadsDir = path.join(process.cwd(), 'public/uploads');
+if (!fs.existsSync(localUploadsDir)) {
+  fs.mkdirSync(localUploadsDir, { recursive: true });
+}
+
+async function uploadFileToGitOrLocal(file: Express.Multer.File): Promise<string> {
+  const uniqueSuffix = Date.now();
+  const ext = path.extname(file.originalname);
+  const basename = path.basename(file.originalname, ext);
+  const safeBasename = basename.replace(/[^a-zA-Z0-9가-힣]/g, '_');
+  const filename = `${uniqueSuffix}-${safeBasename}${ext}`;
+
+  if (process.env.NODE_ENV === 'development' || !process.env.GITHUB_TOKEN) {
+    const filePath = path.join(localUploadsDir, filename);
+    fs.writeFileSync(filePath, file.buffer);
+    return `/uploads/${filename}`;
+  }
+
+  const token = process.env.GITHUB_TOKEN;
+  const owner = process.env.GITHUB_REPO_OWNER || 'small-creator';
+  const repo = process.env.GITHUB_REPO_NAME || 'keunmun';
+  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/public/uploads/${filename}`;
+
+  const encodedContent = file.buffer.toString('base64');
+
+  const updateRes = await fetch(apiUrl, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'User-Agent': 'Vercel-Serverless-Function'
+    },
+    body: JSON.stringify({
+      message: `Upload image ${filename} via Admin Panel`,
+      content: encodedContent
+    })
+  });
+
+  if (!updateRes.ok) {
+    const errorData = await updateRes.json() as { message?: string };
+    throw new Error(errorData.message || `GitHub API error ${updateRes.status}`);
+  }
+
+  return `/uploads/${filename}`;
+}
+
+router.post('/', authMiddleware, upload.single('image'), async (req: Request, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -63,28 +80,27 @@ router.post('/', authMiddleware, upload.single('image'), (req: Request, res: Res
       });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = await uploadFileToGitOrLocal(req.file);
 
     res.json({
       success: true,
       data: {
         url: imageUrl,
-        filename: req.file.filename,
+        filename: req.file.originalname,
         size: req.file.size,
         mimetype: req.file.mimetype
       }
     });
-  } catch (error) {
-    console.error('Error uploading image:', error);
+  } catch (error: any) {
+    console.error(error);
     res.status(500).json({
       success: false,
-      error: '이미지 업로드에 실패했습니다.'
+      error: error.message || '이미지 업로드에 실패했습니다.'
     });
   }
 });
 
-// POST upload multiple images (requires auth)
-router.post('/multiple', authMiddleware, upload.array('images', 20), (req: Request, res: Response) => {
+router.post('/multiple', authMiddleware, upload.array('images', 20), async (req: Request, res: Response) => {
   try {
     const files = req.files as Express.Multer.File[];
     if (!files || files.length === 0) {
@@ -94,27 +110,30 @@ router.post('/multiple', authMiddleware, upload.array('images', 20), (req: Reque
       });
     }
 
-    const uploadedFiles = files.map(file => ({
-      url: `/uploads/${file.filename}`,
-      filename: file.filename,
-      size: file.size,
-      mimetype: file.mimetype
-    }));
+    const uploadedFiles = [];
+    for (const file of files) {
+      const imageUrl = await uploadFileToGitOrLocal(file);
+      uploadedFiles.push({
+        url: imageUrl,
+        filename: file.originalname,
+        size: file.size,
+        mimetype: file.mimetype
+      });
+    }
 
     res.json({
       success: true,
       data: uploadedFiles
     });
-  } catch (error) {
-    console.error('Error uploading images:', error);
+  } catch (error: any) {
+    console.error(error);
     res.status(500).json({
       success: false,
-      error: '이미지 업로드에 실패했습니다.'
+      error: error.message || '이미지 업로드에 실패했습니다.'
     });
   }
 });
 
-// Error handler for multer errors
 router.use((err: any, req: Request, res: Response, next: any) => {
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
@@ -128,14 +147,12 @@ router.use((err: any, req: Request, res: Response, next: any) => {
       error: `파일 업로드 오류: ${err.message}`
     });
   }
-
   if (err) {
     return res.status(400).json({
       success: false,
       error: err.message
     });
   }
-
   next();
 });
 

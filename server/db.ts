@@ -1,100 +1,88 @@
-import Database from 'better-sqlite3';
-import * as path from 'path';
-import * as fs from 'fs';
+import fs from 'fs';
+import path from 'path';
 
-const dataDir = process.env.DATA_DIR || path.join(process.cwd(), 'data');
-const DB_PATH = process.env.DB_PATH || path.join(dataDir, 'realestate.db');
+const dataDir = path.join(process.cwd(), 'data');
 
-// Ensure data directory exists
-const dbDir = path.dirname(DB_PATH);
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
+export function getJsonPath(filename: string): string {
+  return path.join(dataDir, `${filename}.json`);
 }
 
-// Initialize database connection
-const db = new Database(DB_PATH);
+export function readJson(filename: string): any[] {
+  const filePath = getJsonPath(filename);
+  try {
+    if (!fs.existsSync(filePath)) {
+      return [];
+    }
+    const content = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(content);
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
 
-// Enable foreign keys
-db.pragma('foreign_keys = ON');
+export async function writeJson(filename: string, data: any[]): Promise<void> {
+  const filePath = getJsonPath(filename);
+  const content = JSON.stringify(data, null, 2);
 
-// Initialize database schema
-export function initDatabase() {
-  // Create listings table
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS listings (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      image TEXT NOT NULL,
-      price TEXT NOT NULL,
-      title TEXT NOT NULL,
-      type TEXT NOT NULL CHECK(type IN ('매매', '전세')),
-      size TEXT NOT NULL,
-      bed INTEGER NOT NULL,
-      bath INTEGER NOT NULL,
-      tags TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-
-  // Create news table
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS news (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      category TEXT NOT NULL CHECK(category IN ('뉴스', '가이드', '커뮤니티')),
-      image TEXT NOT NULL,
-      title TEXT NOT NULL,
-      description TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-
-  // Create featured_settings table
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS featured_settings (
-      id TEXT PRIMARY KEY,
-      title TEXT NOT NULL,
-      price_25 TEXT NOT NULL,
-      price_34 TEXT NOT NULL
-    )
-  `);
-
-  // Insert default featured settings if empty
-  const count = db.prepare('SELECT COUNT(*) as count FROM featured_settings').get() as { count: number };
-  if (count.count === 0) {
-    const stmt = db.prepare('INSERT INTO featured_settings (id, title, price_25, price_34) VALUES (?, ?, ?, ?)');
-    stmt.run('graceum_sale', '고덕그라시움 매매', '19억~', '25억~');
-    stmt.run('graceum_jeonse', '고덕그라시움 전세', '8억~', '10억~');
-    stmt.run('arteon_sale', '고덕아르테온 매매', '18억~', '24억~');
+  if (process.env.NODE_ENV === 'development' || !process.env.GITHUB_TOKEN) {
+    fs.writeFileSync(filePath, content, 'utf8');
+    return;
   }
 
-  console.log('✅ Database initialized successfully');
-}
-
-// Get database instance
-export function getDb() {
-  return db;
-}
-
-// Backup database
-export function backupDatabase() {
-  const timestamp = new Date().toISOString().replace(/:/g, '-').split('.')[0];
-  const dbDir = path.dirname(DB_PATH);
-  const backupPath = path.join(dbDir, `backup-${timestamp}.db`);
+  const token = process.env.GITHUB_TOKEN;
+  const owner = process.env.GITHUB_REPO_OWNER || 'small-creator';
+  const repo = process.env.GITHUB_REPO_NAME || 'keunmun';
+  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/data/${filename}.json`;
 
   try {
-    fs.copyFileSync(DB_PATH, backupPath);
-    console.log(`✅ Database backed up to ${backupPath}`);
+    const fileRes = await fetch(apiUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'User-Agent': 'Vercel-Serverless-Function'
+      }
+    });
+
+    let sha: string | undefined;
+    if (fileRes.ok) {
+      const fileData = await fileRes.json() as { sha: string };
+      sha = fileData.sha;
+    }
+
+    const encodedContent = Buffer.from(content).toString('base64');
+    const updateRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'Vercel-Serverless-Function'
+      },
+      body: JSON.stringify({
+        message: `Update ${filename}.json via Admin Panel`,
+        content: encodedContent,
+        sha
+      })
+    });
+
+    if (!updateRes.ok) {
+      const errorData = await updateRes.json() as { message?: string };
+      throw new Error(errorData.message || `GitHub API error ${updateRes.status}`);
+    }
   } catch (error) {
-    console.error('❌ Database backup failed:', error);
+    console.error(error);
+    fs.writeFileSync(filePath, content, 'utf8');
   }
 }
 
-// Close database connection
-export function closeDatabase() {
-  db.close();
-  console.log('Database connection closed');
+export function initDatabase() {}
+export function getDb() {
+  return {
+    prepare: (...args: any[]) => ({
+      all: (...args: any[]) => [] as any[],
+      get: (...args: any[]) => null as any,
+      run: (...args: any[]) => ({ lastInsertRowid: 0, changes: 0 })
+    })
+  };
 }
-
-// Initialize on import
-initDatabase();
+export function backupDatabase() {}
+export function closeDatabase() {}

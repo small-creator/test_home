@@ -148,9 +148,9 @@ export default function FeaturedListings() {
                   </div>
 
                   <div className="mt-8">
-                    <a href="tel:02-441-1110" className="block w-full text-center bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-colors py-3 rounded-lg text-sm font-bold text-gray-700 dark:text-gray-300 shadow-sm">
+                    <button type="button" className="block w-full text-center bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-colors py-3 rounded-lg text-sm font-bold text-gray-700 dark:text-gray-300 shadow-sm cursor-default">
                       전화 연결 / 상담 예약
-                    </a>
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -159,9 +159,9 @@ export default function FeaturedListings() {
         </motion.div>
 
         <div className="mt-8 text-center md:hidden">
-          <a className="inline-flex items-center text-primary hover:text-secondary dark:hover:text-white transition-colors font-medium group" href="tel:02-441-1110">
+          <span className="inline-flex items-center text-primary hover:text-secondary dark:hover:text-white transition-colors font-medium group cursor-default">
             상담 전화 연결 <span className="material-symbols-outlined ml-1 transition-transform group-hover:translate-x-1">call</span>
-          </a>
+          </span>
         </div>
       </div>
     </section>

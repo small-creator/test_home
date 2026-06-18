@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import brokerImage from './assets/images/대표이미지.jpg';
 import FeaturedListings from './components/FeaturedListings';
 import CommunityNews from './components/CommunityNews';
 import LoginForm from './components/admin/LoginForm';
@@ -24,9 +23,6 @@ function NewsDetailWrapper() {
   return <NewsDetail id={numericId} />;
 }
 
-// ==========================================
-// 1. Navigation Bar
-// ==========================================
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -46,7 +42,7 @@ function Navbar() {
               <span className="material-symbols-outlined text-white dark:text-secondary text-2xl">roofing</span>
             </div>
             <div className="flex flex-col">
-              <span className="font-display font-bold text-xl text-secondary dark:text-white tracking-wide">고덕그라시움 큰문부동산</span>
+              <span className="font-display font-bold text-xl text-secondary dark:text-white tracking-wide">코중사공인중개사무소</span>
               <span className="text-[0.65rem] uppercase tracking-[0.2em] text-primary font-medium">Real Estate</span>
             </div>
           </Link>
@@ -61,9 +57,9 @@ function Navbar() {
             </Link>
             <div className="flex items-center gap-2 text-secondary dark:text-primary font-bold ml-4">
               <span className="material-symbols-outlined text-lg">call</span>
-              <span className="tracking-widest">02.441.1110</span>
+              <span className="tracking-widest">02-123-4567</span>
             </div>
-            <a className="bg-secondary hover:bg-navy-dark text-white px-5 py-2.5 rounded transition-all transform hover:scale-105 font-medium shadow-md border border-primary/30" href="tel:02-441-1110">문의하기</a>
+            <button type="button" className="bg-secondary hover:bg-navy-dark text-white px-5 py-2.5 rounded transition-all transform hover:scale-105 font-medium shadow-md border border-primary/30 cursor-default">문의하기</button>
           </div>
           <div className="md:hidden flex items-center">
             <button className="text-gray-500 hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -96,16 +92,15 @@ function Navbar() {
           <div className="border-t border-gray-100 dark:border-gray-800 my-2"></div>
           <div className="flex items-center gap-3 px-4 py-3 text-secondary dark:text-primary font-bold">
             <span className="material-symbols-outlined text-xl">call</span>
-            <span className="tracking-widest">02.441.1110</span>
+            <span className="tracking-widest">02-123-4567</span>
           </div>
-          <a
-            href="tel:02-441-1110"
-            className="flex items-center justify-center gap-2 mx-4 py-3 bg-secondary hover:bg-navy-dark text-white font-bold rounded-lg shadow-md border border-primary/30 transition-colors"
-            onClick={closeMobileMenu}
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 mx-4 py-3 bg-secondary hover:bg-navy-dark text-white font-bold rounded-lg shadow-md border border-primary/30 transition-colors w-[calc(100%-2rem)] cursor-default"
           >
             <span className="material-symbols-outlined text-lg">call</span>
             문의하기
-          </a>
+          </button>
         </div>
       </div>
     </motion.nav>
@@ -138,7 +133,7 @@ function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-4xl md:text-5xl lg:text-7xl font-display font-extrabold text-white mb-8 leading-[1.3] drop-shadow-xl tracking-tight"
         >
-          <span className="gold-gradient-text pr-2">큰문부동산</span>은 매물 먼저<br />
+          <span className="gold-gradient-text pr-2">코중사부동산</span>은 매물 먼저<br />
           <span className="relative inline-block mt-2">
             권하는 중개사가 아닙니다
             <svg className="absolute w-full h-3 -bottom-2 left-0 text-primary opacity-60" preserveAspectRatio="none" viewBox="0 0 100 10">
@@ -161,13 +156,13 @@ function Hero() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="flex justify-center"
         >
-          <a
-            href="tel:02-441-1110"
-            className="flex items-center justify-center gap-2.5 bg-primary hover:bg-yellow-500 text-navy-dark font-bold py-4 px-10 rounded-lg shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-lg"
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2.5 bg-primary hover:bg-yellow-500 text-navy-dark font-bold py-4 px-10 rounded-lg shadow-lg transition-all duration-300 text-lg cursor-default"
           >
             <span className="material-symbols-outlined text-xl">call</span>
             가장 좋은 선택 물어보기
-          </a>
+          </button>
         </motion.div>
       </div>
     </div>
@@ -247,7 +242,7 @@ function NeighborhoodGuide() {
           className="text-center mb-16"
         >
           <h2 className="text-primary font-bold tracking-widest text-sm mb-2">WHY DIFFERENT</h2>
-          <h3 className="text-3xl md:text-4xl font-display font-bold text-secondary dark:text-white mb-4">큰문부동산이 다른 이유</h3>
+          <h3 className="text-3xl md:text-4xl font-display font-bold text-secondary dark:text-white mb-4">코중사공인중개사무소의 차별점</h3>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">같은 매물이라도 어떤 중개사를 만나느냐에 따라 결과가 달라집니다.</p>
         </motion.div>
 
@@ -286,7 +281,7 @@ function NeighborhoodGuide() {
             </div>
             <h4 className="text-xl font-bold text-secondary dark:text-white mb-3">광범위한 매물 노출</h4>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
-              대부분의 부동산은 네이버부동산 광고에만 의존합니다. 큰문부동산은 자체 홈페이지, 블로그, 다양한 채널을 통해 매물을 노출합니다.
+              대부분의 부동산은 네이버부동산 광고에만 의존합니다. 코중사공인중개사무소는 자체 홈페이지, 블로그, 다양한 채널을 통해 매물을 노출합니다.
             </p>
             <div className="flex flex-wrap gap-2">
               {['자체 홈페이지', '네이버 블로그', '네이버 부동산', '직방', 'SNS 채널'].map((ch) => (
@@ -309,7 +304,7 @@ function NeighborhoodGuide() {
             </div>
             <h4 className="text-xl font-bold text-secondary dark:text-white mb-3">입주민 중개사</h4>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
-              고덕그라시움에 직접 거주하는 중개사입니다. 내가 사는 곳의 가치를 깎는 일은 절대 하지 않습니다.
+              코중사아파트에 직접 거주하는 중개사입니다. 내가 사는 곳의 가치를 깎는 일은 절대 하지 않습니다.
             </p>
             <div className="bg-secondary/5 dark:bg-white/5 rounded-lg p-4 border-l-4 border-primary">
               <p className="text-secondary dark:text-gray-300 text-sm font-medium leading-relaxed">
@@ -664,7 +659,7 @@ function MarketTrends() {
           </div>
         ) : data ? (
           <div className="space-y-16">
-            <MarketTrendCard data={data[`area${selectedArea}`]} title={`고덕그라시움 (${selectedArea}㎡)`} />
+            <MarketTrendCard data={data[`area${selectedArea}`]} title={`코중사아파트 (${selectedArea}㎡)`} />
           </div>
         ) : null}
       </div>
@@ -672,9 +667,6 @@ function MarketTrends() {
   );
 }
 
-// ==========================================
-// 7. About Broker (중개사 소개)
-// ==========================================
 function AboutBroker() {
   return (
     <section className="py-24 bg-background-light dark:bg-background-dark relative overflow-hidden">
@@ -689,11 +681,11 @@ function AboutBroker() {
             className="w-full lg:w-1/2 relative group"
           >
             <div className="relative z-10 rounded-lg overflow-hidden shadow-2xl">
-              <img alt="이선규 공인중개사" className="w-full h-[500px] object-cover object-top transition-transform duration-700 group-hover:scale-105" src={brokerImage} />
+              <div className="w-full h-[500px] bg-secondary/10 dark:bg-navy-dark/40 border border-dashed border-primary/20 rounded-lg flex items-center justify-center transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent"></div>
               <div className="absolute bottom-8 left-8 text-white">
                 <p className="text-primary font-bold tracking-widest text-sm mb-1">REPRESENTATIVE BROKER</p>
-                <h3 className="text-3xl font-bold">이선규 대표</h3>
+                <h3 className="text-3xl font-bold">홍길동 대표</h3>
               </div>
             </div>
             <div className="absolute -top-6 -left-6 w-32 h-32 border-t-4 border-l-4 border-primary z-0 opacity-60"></div>
@@ -718,7 +710,7 @@ function AboutBroker() {
               최고의 가치를 만들어드립니다.
             </h2>
             <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed mb-8">
-              큰문부동산은 고덕그라시움 및 고덕동, 상일동 일대의 프리미엄 아파트 전문 부동산입니다.
+              코중사공인중개사무소는 코중사아파트 및 고덕동, 상일동 일대의 프리미엄 아파트 전문 부동산입니다.
               단순한 중개를 넘어 고객님의 소중한 자산을 위한 정확한 시세 분석과
               맞춤형 컨설팅을 제공합니다. 프롭테크 기술을 활용한 데이터 분석과
               오랜 현장 경험을 바탕으로 최적의 매물을 매칭해드립니다.
@@ -749,11 +741,11 @@ function AboutBroker() {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-primary">smartphone</span>
-                  <span className="text-xl font-bold text-secondary dark:text-white tracking-wide">010.9345.4108</span>
+                  <span className="text-xl font-bold text-secondary dark:text-white tracking-wide">010-1234-5678</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-primary">call</span>
-                  <span className="text-xl font-bold text-secondary dark:text-white tracking-wide">02.441.1110</span>
+                  <span className="text-xl font-bold text-secondary dark:text-white tracking-wide">02-123-4567</span>
                 </div>
               </div>
             </div>
@@ -764,9 +756,6 @@ function AboutBroker() {
   );
 }
 
-// ==========================================
-// 8. Client Reviews (고객 후기)
-// ==========================================
 const reviewsData = [
   {
     name: '조** 님',
@@ -775,16 +764,16 @@ const reviewsData = [
     initial: 'J',
     bgColor: 'bg-primary',
     textColor: 'text-navy-dark',
-    review: '처음에 강동구 쪽 알아보기 시작하면서 연락을 드렸는데, 제가 찾는 집 조건을 상세히 문의하셨고 또 조건에 맞는 적당한 다른 후보지를 4~5곳 이상 따로 찾아주셔서 결국은 제가 처음에 봤던 곳이 아닌 중개사님이 추천해주신 곳으로 계약을 하게 됐어요. 이선규 중개사님은 제가 필요로 하는 평수부터, 지역, 뷰, 구조, 아이와 지내기 좋은 곳으로 꼼꼼히 파악해주시고 실제로 만나기 전까지 약 한달동안 매물 상황 체크해주셔서 정말 든든했습니다.',
+    review: '처음에 강동구 쪽 알아보기 시작하면서 연락을 드렸는데, 제가 찾는 집 조건을 상세히 문의하셨고 또 조건에 맞는 적당한 다른 후보지를 4~5곳 이상 따로 찾아주셔서 결국은 제가 처음에 봤던 곳이 아닌 중개사님이 추천해주신 곳으로 계약을 하게 됐어요. 홍길동 중개사님은 제가 필요로 하는 평수부터, 지역, 뷰, 구조, 아이와 지내기 좋은 곳으로 꼼꼼히 파악해주시고 실제로 만나기 전까지 약 한달동안 매물 상황 체크해주셔서 정말 든든했습니다.',
   },
   {
     name: '김** 님',
-    location: '고덕아르테온',
+    location: '코중사아파트',
     badge: '계약고객',
     initial: 'K',
     bgColor: 'bg-secondary border border-primary',
     textColor: 'text-white',
-    review: '이선규 중개사님을 만나서 참 좋았습니다. 인상도 좋으시고 다정하시게 설명도 잘 해주시고 무엇보다 믿음이 가서 다른 중개소 문은 두드리지도 않았습니다. 여러 아파트를 돌러봐 기억이 뒤범벅이 되는데 꼼꼼하게 메모 정리해서 보내주셔서 감사했습니다. 앞으로도 좋은일만 가득하시길 바랍니다.',
+    review: '홍길동 중개사님을 만나서 참 좋았습니다. 인상도 좋으시고 다정하시게 설명도 잘 해주시고 무엇보다 믿음이 가서 다른 중개소 문은 두드리지도 않았습니다. 여러 아파트를 돌러봐 기억이 뒤범벅이 되는데 꼼꼼하게 메모 정리해서 보내주셔서 감사했습니다. 앞으로도 좋은일만 가득하시길 바랍니다.',
   },
   {
     name: '송** 님',
@@ -797,7 +786,7 @@ const reviewsData = [
   },
   {
     name: '조** 님',
-    location: '고덕그라시움',
+    location: '코중사아파트',
     badge: '계약고객',
     initial: 'C',
     bgColor: 'bg-blue-600',
@@ -806,7 +795,7 @@ const reviewsData = [
   },
   {
     name: '천** 님',
-    location: '고덕그라시움',
+    location: '코중사아파트',
     badge: '계약고객',
     initial: 'C',
     bgColor: 'bg-gray-700',
@@ -861,7 +850,7 @@ function ClientReviews() {
         >
           <h2 className="text-primary font-bold tracking-widest text-sm mb-2">CLIENT REVIEWS</h2>
           <h3 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">고객 후기</h3>
-          <p className="text-gray-300 max-w-2xl mx-auto">실제 고객분들이 직접 남겨주신 큰문부동산의 후기입니다.</p>
+          <p className="text-gray-300 max-w-2xl mx-auto">실제 고객분들이 직접 남겨주신 코중사공인중개사무소의 후기입니다.</p>
         </motion.div>
 
         <div className="relative">
@@ -994,9 +983,9 @@ function Services() {
                 </div>
               </li>
             </ul>
-            <a href="tel:02-441-1110" className="inline-flex items-center justify-center w-full py-3 px-6 bg-white dark:bg-surface-dark text-secondary dark:text-white font-bold rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-secondary hover:text-white hover:border-secondary dark:hover:bg-secondary dark:hover:border-secondary transition-colors">
+            <button type="button" className="inline-flex items-center justify-center w-full py-3 px-6 bg-white dark:bg-surface-dark text-secondary dark:text-white font-bold rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-secondary hover:text-white hover:border-secondary dark:hover:bg-secondary dark:hover:border-secondary transition-colors cursor-default">
               매수 상담하기
-            </a>
+            </button>
           </motion.div>
 
           <motion.div
@@ -1033,9 +1022,9 @@ function Services() {
                 </div>
               </li>
             </ul>
-            <a href="tel:02-441-1110" className="inline-flex items-center justify-center w-full py-3 px-6 bg-primary text-navy-dark font-bold rounded-lg hover:bg-yellow-500 transition-colors">
+            <button type="button" className="inline-flex items-center justify-center w-full py-3 px-6 bg-primary text-navy-dark font-bold rounded-lg hover:bg-yellow-500 transition-colors cursor-default">
               매도 상담하기
-            </a>
+            </button>
           </motion.div>
         </div>
       </div>
@@ -1065,11 +1054,11 @@ function CTA() {
         className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10"
       >
         <h2 className="text-4xl md:text-5xl font-display font-bold text-secondary dark:text-white mb-6">내 편인 중개사를 원하시나요?</h2>
-        <p className="text-gray-500 dark:text-gray-300 text-lg mb-10 max-w-2xl mx-auto">매물이 아닌 고객님의 이야기를 먼저 듣겠습니다.<br className="hidden sm:block" /> 편하게 연락 주세요. 큰문부동산이 내 편이 되어드립니다.</p>
+        <p className="text-gray-500 dark:text-gray-300 text-lg mb-10 max-w-2xl mx-auto">매물이 아닌 고객님의 이야기를 먼저 듣겠습니다.<br className="hidden sm:block" /> 편하게 연락 주세요. 코중사공인중개사무소가 내 편이 되어드립니다.</p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <a className="bg-secondary hover:bg-navy-dark text-white font-bold py-4 px-10 rounded shadow-lg transition-transform transform hover:-translate-y-1" href="tel:02-441-1110">
+          <button type="button" className="bg-secondary hover:bg-navy-dark text-white font-bold py-4 px-10 rounded shadow-lg transition-transform transform hover:-translate-y-1 cursor-default">
             내 편과 상담 시작하기
-          </a>
+          </button>
         </div>
       </motion.div>
     </section>
@@ -1090,7 +1079,7 @@ function Footer() {
                 <span className="material-symbols-outlined text-white dark:text-secondary text-2xl">roofing</span>
               </div>
               <div className="flex flex-col">
-                <span className="font-display font-bold text-2xl text-secondary dark:text-white tracking-tight">큰문부동산</span>
+                <span className="font-display font-bold text-2xl text-secondary dark:text-white tracking-tight">코중사공인중개사무소</span>
                 <span className="text-[0.6rem] uppercase tracking-[0.3em] text-primary font-bold">Premium Real Estate</span>
               </div>
             </Link>
@@ -1132,8 +1121,8 @@ function Footer() {
               <span className="absolute -bottom-2 left-0 w-6 h-0.5 bg-primary"></span>
             </h4>
             <ul className="space-y-4 text-sm text-gray-600 dark:text-gray-400">
-              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="tel:02-441-1110"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>매수 상담</a></li>
-              <li><a className="hover:text-primary transition-all flex items-center gap-2 group" href="tel:02-441-1110"><span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-primary"></span>매도 의뢰</a></li>
+              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span>매수 상담</li>
+              <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span>매도 의뢰</li>
             </ul>
           </div>
 
@@ -1147,19 +1136,19 @@ function Footer() {
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
                   <span className="material-symbols-outlined text-lg">location_on</span>
                 </div>
-                <span className="leading-relaxed">강동구 고덕로 353 1상가동 1층 에이114호<br /><span className="text-gray-400 text-xs">(고덕동, 고덕그라시움)</span></span>
+                <span className="leading-relaxed">서울특별시 강남구 테헤란로 123<br /><span className="text-gray-400 text-xs">(역삼동, 코중사빌딩 1층)</span></span>
               </li>
               <li className="flex items-center gap-4">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
                   <span className="material-symbols-outlined text-lg">call</span>
                 </div>
-                <span className="font-bold text-secondary dark:text-white text-lg">02.441.1110</span>
+                <span className="font-bold text-secondary dark:text-white text-lg">02-123-4567</span>
               </li>
               <li className="flex items-center gap-4">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
                   <span className="material-symbols-outlined text-lg">smartphone</span>
                 </div>
-                <span className="font-bold text-secondary dark:text-white font-display">010.9345.4108</span>
+                <span className="font-bold text-secondary dark:text-white font-display">010-1234-5678</span>
               </li>
             </ul>
           </div>
@@ -1169,11 +1158,11 @@ function Footer() {
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
             <div className="space-y-2">
               <p className="text-[11px] text-gray-500 dark:text-gray-500 flex flex-wrap gap-x-4 gap-y-2">
-                <span>© 2024 큰문부동산 공인중개사사무소. All rights reserved.</span>
+                <span>© 2024 코중사공인중개사무소. All rights reserved.</span>
                 <span className="text-gray-300 dark:text-gray-700">|</span>
-                <span>대표: 이선규</span>
+                <span>대표: 홍길동</span>
                 <span className="text-gray-300 dark:text-gray-700">|</span>
-                <span>등록번호: 11740-2022-00126</span>
+                <span>등록번호: 11110-2026-00001</span>
               </p>
               <div className="flex items-center gap-2 text-[10px] text-gray-400">
                 <span className="material-symbols-outlined text-xs text-primary">verified_user</span>

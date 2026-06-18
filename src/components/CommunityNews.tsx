@@ -100,7 +100,7 @@ export default function CommunityNews() {
         >
           <h2 className="text-primary font-bold tracking-widest text-sm mb-2">NEWS & TIP</h2>
           <h3 className="text-3xl md:text-4xl font-display font-bold text-secondary dark:text-white mb-4">부동산 뉴스 & 팁</h3>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">고덕그라시움·고덕아르테온 등 고덕동, 상일동 일대의 관련 최신 부동산 소식과 소유주를 위한 유용한 콘텐츠를 확인하세요.</p>
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">코중사아파트 등 일대의 관련 최신 부동산 소식과 소유주를 위한 유용한 콘텐츠를 확인하세요.</p>
         </motion.div>
         <motion.div
           variants={statsContainer}

@@ -1,21 +1,18 @@
 import { Router, Request, Response } from 'express';
-import { getDb } from '../db';
+import { readJson, writeJson } from '../db';
 import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
-const db = getDb();
 
-// GET all news
 router.get('/', (req: Request, res: Response) => {
   try {
-    const news = db.prepare('SELECT * FROM news ORDER BY created_at DESC').all();
-
+    const news = readJson('news').sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     res.json({
       success: true,
       data: news
     });
   } catch (error) {
-    console.error('Error fetching news:', error);
+    console.error(error);
     res.status(500).json({
       success: false,
       error: '뉴스 목록을 불러오는데 실패했습니다.'
@@ -23,11 +20,10 @@ router.get('/', (req: Request, res: Response) => {
   }
 });
 
-// GET single news by ID
 router.get('/:id', (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const news = db.prepare('SELECT * FROM news WHERE id = ?').get(id);
+    const news = readJson('news').find(item => item.id === Number(id));
 
     if (!news) {
       return res.status(404).json({
@@ -41,7 +37,7 @@ router.get('/:id', (req: Request, res: Response) => {
       data: news
     });
   } catch (error) {
-    console.error('Error fetching news:', error);
+    console.error(error);
     res.status(500).json({
       success: false,
       error: '뉴스를 불러오는데 실패했습니다.'
@@ -49,12 +45,10 @@ router.get('/:id', (req: Request, res: Response) => {
   }
 });
 
-// POST create new news (requires auth)
-router.post('/', authMiddleware, (req: Request, res: Response) => {
+router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { category, image, title, description } = req.body;
 
-    // Validation
     if (!category || !title || !description) {
       return res.status(400).json({
         success: false,
@@ -69,22 +63,33 @@ router.post('/', authMiddleware, (req: Request, res: Response) => {
       });
     }
 
-    const stmt = db.prepare(`
-      INSERT INTO news (category, image, title, description)
-      VALUES (?, ?, ?, ?)
-    `);
+    const newsList = readJson('news');
+    const maxId = newsList.reduce((max, item) => item.id > max ? item.id : max, 0);
+    const newId = maxId + 1;
+    const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
-    const result = stmt.run(category, image || '', title, description);
+    const newItem = {
+      id: newId,
+      category,
+      image: image || '',
+      title,
+      description,
+      created_at: now,
+      updated_at: now
+    };
+
+    newsList.push(newItem);
+    await writeJson('news', newsList);
 
     res.status(201).json({
       success: true,
       data: {
-        id: result.lastInsertRowid,
+        id: newId,
         message: '뉴스가 성공적으로 등록되었습니다.'
       }
     });
   } catch (error) {
-    console.error('Error creating news:', error);
+    console.error(error);
     res.status(500).json({
       success: false,
       error: '뉴스 등록에 실패했습니다.'
@@ -92,22 +97,11 @@ router.post('/', authMiddleware, (req: Request, res: Response) => {
   }
 });
 
-// PUT update news (requires auth)
-router.put('/:id', authMiddleware, (req: Request, res: Response) => {
+router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { category, image, title, description } = req.body;
 
-    // Check if news exists
-    const existing = db.prepare('SELECT id FROM news WHERE id = ?').get(id);
-    if (!existing) {
-      return res.status(404).json({
-        success: false,
-        error: '뉴스를 찾을 수 없습니다.'
-      });
-    }
-
-    // Validation
     if (category && !['뉴스', '팁'].includes(category)) {
       return res.status(400).json({
         success: false,
@@ -115,30 +109,36 @@ router.put('/:id', authMiddleware, (req: Request, res: Response) => {
       });
     }
 
-    const stmt = db.prepare(`
-      UPDATE news
-      SET category = COALESCE(?, category),
-          image = COALESCE(?, image),
-          title = COALESCE(?, title),
-          description = COALESCE(?, description),
-          updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?
-    `);
+    const newsList = readJson('news');
+    const index = newsList.findIndex(item => item.id === Number(id));
 
-    stmt.run(
-      category || null,
-      image || null,
-      title || null,
-      description || null,
-      id
-    );
+    if (index === -1) {
+      return res.status(404).json({
+        success: false,
+        error: '뉴스를 찾을 수 없습니다.'
+      });
+    }
+
+    const existing = newsList[index];
+    const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+    newsList[index] = {
+      ...existing,
+      category: category !== undefined ? category : existing.category,
+      image: image !== undefined ? image : existing.image,
+      title: title !== undefined ? title : existing.title,
+      description: description !== undefined ? description : existing.description,
+      updated_at: now
+    };
+
+    await writeJson('news', newsList);
 
     res.json({
       success: true,
       data: { message: '뉴스가 성공적으로 수정되었습니다.' }
     });
   } catch (error) {
-    console.error('Error updating news:', error);
+    console.error(error);
     res.status(500).json({
       success: false,
       error: '뉴스 수정에 실패했습니다.'
@@ -146,26 +146,27 @@ router.put('/:id', authMiddleware, (req: Request, res: Response) => {
   }
 });
 
-// DELETE news (requires auth)
-router.delete('/:id', authMiddleware, (req: Request, res: Response) => {
+router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const newsList = readJson('news');
+    const filtered = newsList.filter(item => item.id !== Number(id));
 
-    const result = db.prepare('DELETE FROM news WHERE id = ?').run(id);
-
-    if (result.changes === 0) {
+    if (filtered.length === newsList.length) {
       return res.status(404).json({
         success: false,
         error: '뉴스를 찾을 수 없습니다.'
       });
     }
 
+    await writeJson('news', filtered);
+
     res.json({
       success: true,
       data: { message: '뉴스가 성공적으로 삭제되었습니다.' }
     });
   } catch (error) {
-    console.error('Error deleting news:', error);
+    console.error(error);
     res.status(500).json({
       success: false,
       error: '뉴스 삭제에 실패했습니다.'

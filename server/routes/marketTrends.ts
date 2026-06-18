@@ -1,11 +1,12 @@
 import { Router, Request, Response } from 'express';
-import { getDb } from '../db';
+import fs from 'fs';
 
 const router = Router();
 
 function getApiKey(): string {
   return process.env.DATA_GO_KR_API_KEY || '';
 }
+
 const API_ENDPOINTS = [
   'https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev',
   'http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev'
@@ -118,15 +119,13 @@ function extractTransaction(itemXml: string): AptTransaction | null {
 async function fetchTransactionData(yearMonth: string): Promise<AptTransaction[]> {
   const apiKey = getApiKey();
   if (!apiKey) {
-    console.error('❌ DATA_GO_KR_API_KEY가 설정되지 않았습니다.');
+    console.error('DATA_GO_KR_API_KEY not set');
     return [];
   }
 
   for (const endpoint of API_ENDPOINTS) {
     try {
       const url = `${endpoint}?serviceKey=${encodeURIComponent(apiKey)}&LAWD_CD=${GANGDONG_CODE}&DEAL_YMD=${yearMonth}&pageNo=1&numOfRows=9999`;
-
-      console.log(`📡 API 호출: ${yearMonth} → ${endpoint.includes('apis.data.go.kr') ? 'data.go.kr' : 'molit.go.kr'}`);
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 15000);
 
@@ -134,16 +133,12 @@ async function fetchTransactionData(yearMonth: string): Promise<AptTransaction[]
       clearTimeout(timeout);
 
       if (!response.ok) {
-        console.warn(`⚠️ HTTP ${response.status} - 다음 엔드포인트 시도`);
         continue;
       }
 
       const xmlText = await response.text();
-
       const resultCode = parseXmlValue(xmlText, 'resultCode');
       if (resultCode && resultCode !== '00' && resultCode !== '000') {
-        const errorMsg = parseXmlValue(xmlText, 'resultMsg');
-        console.error(`❌ API 에러 [${resultCode}]: ${errorMsg}`);
         continue;
       }
 
@@ -157,26 +152,16 @@ async function fetchTransactionData(yearMonth: string): Promise<AptTransaction[]
         }
       }
 
-      console.log(`📊 ${yearMonth}: 전체 ${items.length}건 중 고덕그라시움 ${transactions.length}건`);
       return transactions;
-
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
-        console.warn(`⏱️ 타임아웃 - 다음 엔드포인트 시도`);
-      } else {
-        console.warn(`⚠️ 연결 실패: ${error.message} - 다음 엔드포인트 시도`);
-      }
+    } catch (error) {
       continue;
     }
   }
-
-  console.error(`❌ ${yearMonth}: 모든 엔드포인트 실패`);
   return [];
 }
 
 async function fetchMarketTrendData(): Promise<MarketTrendResponse> {
   const now = new Date();
-
   const allTransactions84: (AptTransaction & { yearMonth: string })[] = [];
   const allTransactions59: (AptTransaction & { yearMonth: string })[] = [];
   const monthlyData84: MonthlyTrend[] = [];
@@ -189,7 +174,6 @@ async function fetchMarketTrendData(): Promise<MarketTrendResponse> {
 
     const transactions = await fetchTransactionData(yearMonth);
 
-    // 84 처리
     const tx84 = transactions.filter(t => {
       const area = parseFloat(t.excluUseAr);
       return area >= 84 && area < 85;
@@ -208,7 +192,6 @@ async function fetchMarketTrendData(): Promise<MarketTrendResponse> {
       });
     }
 
-    // 59 처리
     const tx59 = transactions.filter(t => {
       const area = parseFloat(t.excluUseAr);
       return area >= 59 && area < 60;
@@ -287,70 +270,52 @@ async function fetchMarketTrendData(): Promise<MarketTrendResponse> {
   };
 }
 
-function initCacheTable() {
-  const db = getDb();
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS market_trends_cache (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      data TEXT NOT NULL,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-}
+const cacheFile = '/tmp/market_trends_cache.json';
+
+function initCacheTable() {}
 
 function getCachedData(): MarketTrendResponse | null {
-  const db = getDb();
-  const row = db.prepare('SELECT data, updated_at FROM market_trends_cache WHERE id = 1').get() as { data: string; updated_at: string } | undefined;
-
-  if (!row) return null;
-
-  const updatedAt = new Date(row.updated_at);
-  const now = new Date();
-  const hoursDiff = (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60);
-
-  if (hoursDiff > 24) return null;
-
   try {
-    const parsed = JSON.parse(row.data);
-    if (!parsed.area84 || !parsed.area59) return null;
-    return parsed;
+    if (!fs.existsSync(cacheFile)) return null;
+    const content = fs.readFileSync(cacheFile, 'utf8');
+    const cache = JSON.parse(content);
+    const updatedAt = new Date(cache.updatedAt);
+    const now = new Date();
+    const hoursDiff = (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60);
+    if (hoursDiff > 24) return null;
+    return cache.data;
   } catch {
     return null;
   }
 }
 
 function saveCachedData(data: MarketTrendResponse) {
-  const db = getDb();
-  const stmt = db.prepare(`
-    INSERT OR REPLACE INTO market_trends_cache (id, data, updated_at)
-    VALUES (1, ?, CURRENT_TIMESTAMP)
-  `);
-  stmt.run(JSON.stringify(data));
+  try {
+    const cache = {
+      updatedAt: new Date().toISOString(),
+      data
+    };
+    fs.writeFileSync(cacheFile, JSON.stringify(cache), 'utf8');
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 router.get('/', async (req: Request, res: Response) => {
   try {
     initCacheTable();
-
     let data = getCachedData();
 
     if (!data) {
-      console.log('📊 공공데이터 API에서 최신 데이터 가져오는 중...');
       data = await fetchMarketTrendData();
-
       if (data.area84.monthlyData.length > 0 || data.area59.monthlyData.length > 0) {
         saveCachedData(data);
-        console.log('✅ 데이터 캐시 저장 완료');
-      } else {
-        console.warn('⚠️ 데이터가 비어있어 캐시하지 않음');
       }
-    } else {
-      console.log('✅ 캐시된 데이터 사용 (24시간 유효)');
     }
 
     res.json({ success: true, data });
   } catch (error) {
-    console.error('Market trends API error:', error);
+    console.error(error);
     res.status(500).json({
       success: false,
       error: '시장 동향 데이터를 가져오는데 실패했습니다.'
@@ -360,7 +325,6 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.post('/refresh', async (req: Request, res: Response) => {
   try {
-    console.log('🔄 수동 데이터 갱신 요청...');
     initCacheTable();
     const data = await fetchMarketTrendData();
 
@@ -370,7 +334,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
 
     res.json({ success: true, message: '데이터가 갱신되었습니다.', data });
   } catch (error) {
-    console.error('Refresh error:', error);
+    console.error(error);
     res.status(500).json({
       success: false,
       error: '데이터 갱신에 실패했습니다.'

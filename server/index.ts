@@ -3,24 +3,20 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { backupDatabase } from './db';
 import newsRouter from './routes/news';
 import uploadRouter from './routes/upload';
 import marketTrendsRouter from './routes/marketTrends';
 import featuredRouter from './routes/featured';
-import { getDb } from './db';
+import { readJson } from './db';
 
-// ES module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
@@ -29,24 +25,23 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Ensure uploads directory exists (inside data volume)
-const dataDir = process.env.DATA_DIR || path.join(process.cwd(), 'data');
+const dataDir = path.join(process.cwd(), 'data');
 const uploadDir = path.join(dataDir, 'uploads');
 
-// Serve static files (uploaded images)
 app.use('/uploads', express.static(uploadDir));
 
-// API Routes
 app.use('/api/news', newsRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/market-trends', marketTrendsRouter);
 app.use('/api/featured', featuredRouter);
 
-// Dynamic Sitemap route
 app.get('/sitemap.xml', (req: Request, res: Response) => {
   try {
-    const db = getDb();
-    const newsItems = db.prepare('SELECT id, updated_at FROM news ORDER BY updated_at DESC').all() as any[];
+    const newsItems = readJson('news').sort((a: any, b: any) => {
+      const timeA = new Date(a.updated_at).getTime();
+      const timeB = new Date(b.updated_at).getTime();
+      return timeB - timeA;
+    });
 
     const baseUrl = 'https://keunmun.up.railway.app';
     const today = new Date().toISOString().split('T')[0];
@@ -66,8 +61,7 @@ app.get('/sitemap.xml', (req: Request, res: Response) => {
     <priority>0.8</priority>
   </url>`;
 
-    newsItems.forEach(item => {
-      // Format: YYYY-MM-DD
+    newsItems.forEach((item: any) => {
       const lastMod = item.updated_at ? item.updated_at.split(' ')[0] : today;
       xml += `
   <url>
@@ -83,37 +77,31 @@ app.get('/sitemap.xml', (req: Request, res: Response) => {
     res.header('Content-Type', 'application/xml');
     res.send(xml);
   } catch (error) {
-    console.error('Sitemap generation failed:', error);
+    console.error(error);
     res.status(500).send('Error generating sitemap');
   }
 });
 
-// Production: Serve frontend static files
-if (process.env.NODE_ENV === 'production') {
-  // Serve static files from dist directory
+if (process.env.NODE_ENV === 'production' && !process.env.VERCEL) {
   app.use(express.static(path.join(__dirname, '../dist')));
 
-  // Handle client-side routing - send all non-API requests to index.html
   app.get('*', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
   });
 }
 
-// Health check endpoint
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('Server error:', err);
+  console.error(err);
   res.status(500).json({
     success: false,
     error: '서버 오류가 발생했습니다.'
   });
 });
 
-// 404 handler
 app.use((req: Request, res: Response) => {
   res.status(404).json({
     success: false,
@@ -121,24 +109,10 @@ app.use((req: Request, res: Response) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📁 Uploads directory: ${uploadDir}`);
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  });
+}
 
-  // Backup database on startup in production
-  if (process.env.NODE_ENV === 'production') {
-    backupDatabase();
-  }
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received. Shutting down gracefully...');
-  process.exit(0);
-});
-
-process.on('SIGINT', () => {
-  console.log('SIGINT received. Shutting down gracefully...');
-  process.exit(0);
-});
+export default app;

@@ -30,7 +30,7 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
               </div>
               <div>
                 <h1 className="text-2xl font-display font-bold text-secondary dark:text-white">
-                  큰문부동산 관리자
+                  코중사공인중개사무소 관리자
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   매물 시세 및 커뮤니티 관리
