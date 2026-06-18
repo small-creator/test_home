@@ -17,7 +17,14 @@ async function apiCall<T>(
       },
     });
 
-    const data = await response.json();
+    let data: any;
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      data = { error: text || `HTTP error! status: ${response.status}` };
+    }
 
     if (!response.ok) {
       return {

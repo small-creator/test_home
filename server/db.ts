@@ -25,7 +25,16 @@ export async function writeJson(filename: string, data: any[]): Promise<void> {
   const filePath = getJsonPath(filename);
   const content = JSON.stringify(data, null, 2);
 
-  if (process.env.NODE_ENV === 'development' || !process.env.GITHUB_TOKEN) {
+  if (process.env.NODE_ENV === 'development') {
+    fs.writeFileSync(filePath, content, 'utf8');
+    return;
+  }
+
+  if (process.env.VERCEL && !process.env.GITHUB_TOKEN) {
+    throw new Error('Vercel 배포 환경에서 데이터를 수정하려면 GITHUB_TOKEN 환경 변수 설정이 필요합니다.');
+  }
+
+  if (!process.env.GITHUB_TOKEN) {
     fs.writeFileSync(filePath, content, 'utf8');
     return;
   }

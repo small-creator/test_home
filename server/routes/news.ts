@@ -92,7 +92,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      error: '뉴스 등록에 실패했습니다.'
+      error: error instanceof Error ? error.message : '뉴스 등록에 실패했습니다.'
     });
   }
 });
@@ -141,7 +141,7 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      error: '뉴스 수정에 실패했습니다.'
+      error: error instanceof Error ? error.message : '뉴스 수정에 실패했습니다.'
     });
   }
 });
@@ -169,7 +169,7 @@ router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      error: '뉴스 삭제에 실패했습니다.'
+      error: error instanceof Error ? error.message : '뉴스 삭제에 실패했습니다.'
     });
   }
 });

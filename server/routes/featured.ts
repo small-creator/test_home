@@ -53,7 +53,7 @@ router.put('/', authMiddleware, async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({
       success: false,
-      error: '추천 매물 시세 업데이트에 실패했습니다.'
+      error: error instanceof Error ? error.message : '추천 매물 시세 업데이트에 실패했습니다.'
     });
   }
 });
